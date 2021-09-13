@@ -69,6 +69,27 @@ function incObj(inc){
     }
 }
 
+const intPrio=(strPrio)=>{
+    let prio;
+    switch(strPrio){
+        case "Critical":
+            prio=0
+            break;
+        case "High":
+            prio=1
+            break;
+        case "Medium":
+            prio=2
+            break;
+        case "Low":
+            prio=4
+            break;
+        default:
+            break;
+    }
+    return prio
+}
+
 const select = state => {
     let sProps={}
     sProps.tickets=state.request.tickets;
@@ -98,31 +119,40 @@ function App(props) {
 
     },[])
 
+    const sortTickets=(a,b)=>{
+        if ((a.priority)===b.priority) {
+            return b.submitDate - a.submitDate
+        }else{
+            return  intPrio(a.priority)-intPrio(b.priority)
+        }
+
+    }
+
     React.useEffect(()=>{
       setColumns({
             [1]: {
                 name: "Assigned",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e)),
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e)).sort(sortTickets),
                 count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").length
             },
             [2]: {
                 name: "In Progress",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e)),
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e)).sort(sortTickets),
                 count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").length
             },
             [3]: {
                 name: "Pending",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e)),
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e)).sort(sortTickets),
                 count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").length
             },
             [4]: {
                 name: "Resolved",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e)),
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e)).sort(sortTickets),
                 count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").length
             },
             [6]: {
                 name: "Cancelled",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e)),
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e)).sort(sortTickets),
                 count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").length
             }
 
