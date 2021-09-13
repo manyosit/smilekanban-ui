@@ -1,5 +1,5 @@
 import React,{useContext,useState} from "react";
-import {Layout,Radio,message,Spin} from "antd";
+import {Layout,Radio,message,Spin,Tag} from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import './App.css';
 import ErrorHandler from "./util/ErrorHandler";
@@ -102,23 +102,28 @@ function App(props) {
       setColumns({
             [1]: {
                 name: "Assigned",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e))
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e)),
+                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").length
             },
             [2]: {
                 name: "In Progress",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e))
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e)),
+                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").length
             },
             [3]: {
                 name: "Pending",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e))
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e)),
+                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").length
             },
             [4]: {
                 name: "Resolved",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e))
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e)),
+                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").length
             },
             [6]: {
                 name: "Cancelled",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e))
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e)),
+                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").length
             }
 
 
@@ -167,7 +172,9 @@ function App(props) {
                           onDragEnd={result => onDragEnd(result, columns, setColumns)}
                       >
                           {Object.entries(columns).map(([columnId, column], index) => {
+
                               return (
+
                                   <div
                                       style={{
                                           display: "flex",
@@ -176,11 +183,13 @@ function App(props) {
                                       }}
                                       key={columnId}
                                   >
-                                      <h2>{column.name}</h2>
-                                      <div style={{ margin: 8 }}>
+                                        <h2 >{column.name}<Tag color="blue" style={{top:"-3px", position:"relative", left:"3px"}}>{column.count}</Tag></h2>
+                                  <div style={{ margin: 8 }}>
                                           <Droppable droppableId={columnId} key={columnId}>
                                               {(provided, snapshot) => {
                                                   return (
+
+
                                                       <div
                                                           {...provided.droppableProps}
                                                           ref={provided.innerRef}
@@ -193,6 +202,7 @@ function App(props) {
                                                               minHeight: 500
                                                           }}
                                                       >
+
                                                           {column.items && column.items.map((item, index) => {
                                                               return (
                                                                   <Draggable
@@ -232,11 +242,16 @@ function App(props) {
                                                           })}
                                                           {provided.placeholder}
                                                       </div>
+
                                                   );
+
                                               }}
+
                                           </Droppable>
                                       </div>
+
                                   </div>
+
                               );
                           })}
                       </DragDropContext>
