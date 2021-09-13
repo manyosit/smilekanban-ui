@@ -71,6 +71,8 @@ export const getTickets = createAsyncThunk("request/getTickets",  async ({ histo
     const response = await restApi({url:window._env_.REACT_APP_API_URL+"/api/arsys/v1/entry/HPD:Help Desk?q="+query,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
     return response;
 });
+
+
 export const setQuery = createAsyncThunk("request/getTickets",  async ({ selection,history,userManager }) => {
 
     const user = await userManager.getUser()

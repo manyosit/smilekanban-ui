@@ -1,4 +1,5 @@
 {
+  "formName": "HPD:Help Desk",
   "filter": [
     {
       "name": "Assigned to me",
@@ -8,5 +9,36 @@
       "name": "Assigned to my groups",
       "query": "query2"
     }
-  ]
+  ],
+  "header": {
+    "titleField": "Incident Number",
+    "tagField": "Priority"
+  },
+  "cardFields": {
+    "Summary": "Description",
+    "Assigned Group": "Assigned Group",
+    "Assignee": "Assignee",
+    "Created": "Submit Date"
+  },
+  "idField": "Incident Number",
+  "columnField": "Status",
+  "columns": {
+    "Assigned": {},
+    "In Progress": {},
+    "Pending": {},
+    "Resolved": {},
+    "Cancelled": {},
+    "Closed": {}
+  },
+  "actions": {
+    "Show Worklogs": {
+      "type": "subRecord"
+    },
+    "Reassign": {
+      "type": "setValues"
+    },
+    "Open in SmartIT": {
+      "type": "open"
+    }
+  }
 }

@@ -129,34 +129,38 @@ function App(props) {
     }
 
     function filterTickets(tickets, status) {
-        return tickets.entries.filter(e=>e.values.Status===status).map(e=>incObj(e)).sort(sortTickets)
+        if (tickets && tickets.entries && Array.isArray(tickets.entries)) {
+            return tickets.entries.filter(e=>e.values.Status===status).map(e=>incObj(e)).sort(sortTickets)
+        } else {
+            return []
+        }
     }
 
     React.useEffect(()=>{
       setColumns({
             [1]: {
                 name: "Assigned",
-                items: tickets && filterTickets(tickets, "Assigned"),
+                items: filterTickets(tickets, "Assigned"),
                 count: filterTickets(tickets, "Assigned").length
             },
             [2]: {
                 name: "In Progress",
-                items: tickets && filterTickets(tickets, "In Progress"),
+                items: filterTickets(tickets, "In Progress"),
                 count: filterTickets(tickets, "In Progress").length
             },
             [3]: {
                 name: "Pending",
-                items: tickets && filterTickets(tickets, "Pending"),
+                items: filterTickets(tickets, "Pending"),
                 count: filterTickets(tickets, "Pending").length
             },
             [4]: {
                 name: "Resolved",
-                items: tickets && filterTickets(tickets, "Resolved"),
+                items: filterTickets(tickets, "Resolved"),
                 count: filterTickets(tickets, "Resolved").length
             },
             [6]: {
                 name: "Cancelled",
-                items: tickets && filterTickets(tickets, "Cancelled"),
+                items: filterTickets(tickets, "Cancelled"),
                 count: filterTickets(tickets, "Cancelled").length
             }
         });
