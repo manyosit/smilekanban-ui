@@ -136,27 +136,27 @@ function App(props) {
       setColumns({
             [1]: {
                 name: "Assigned",
-                items: filterTickets(tickets, "Assigned"),
+                items: tickets && filterTickets(tickets, "Assigned"),
                 count: filterTickets(tickets, "Assigned").length
             },
             [2]: {
                 name: "In Progress",
-                items: filterTickets(tickets, "In Progress"),
+                items: tickets && filterTickets(tickets, "In Progress"),
                 count: filterTickets(tickets, "In Progress").length
             },
             [3]: {
                 name: "Pending",
-                items: filterTickets(tickets, "Pending"),
+                items: tickets && filterTickets(tickets, "Pending"),
                 count: filterTickets(tickets, "Pending").length
             },
             [4]: {
                 name: "Resolved",
-                items: filterTickets(tickets, "Resolved"),
+                items: tickets && filterTickets(tickets, "Resolved"),
                 count: filterTickets(tickets, "Resolved").length
             },
             [6]: {
                 name: "Cancelled",
-                items: filterTickets(tickets, "Cancelled"),
+                items: tickets && filterTickets(tickets, "Cancelled"),
                 count: filterTickets(tickets, "Cancelled").length
             }
         });

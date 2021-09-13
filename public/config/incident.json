@@ -1,0 +1,12 @@
+{
+  "filter": [
+    {
+      "name": "Assigned to me",
+      "query": "query1"
+    },
+    {
+      "name": "Assigned to my groups",
+      "query": "query2"
+    }
+  ]
+}
