@@ -26,9 +26,9 @@ ReactDOM.render(
                   <Route exact={true} path="/logout" component={Logout} />
                   <Route exact={true} path="/logout/callback" component={LogoutCallback} />
                   <Route exact={true} path="/silentrenew" component={SilentRenew} />
-                  <PrivateRoute path="/kanban"  component={ App } />
-
-                  <Redirect from="/" to="/kanban"/>
+                  <PrivateRoute path="/kanban/:id"  component={ App } />
+                  <Redirect from="/kanban" to="/kanban/incident"/>
+                  <Redirect from="/" to="/kanban/incident"/>
 
               </Switch>
 

@@ -5,7 +5,7 @@ import './App.css';
 import ErrorHandler from "./util/ErrorHandler";
 import {useDispatch,connect} from "react-redux";
 
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import {AuthContext} from "./util/Auth/AuthProvider";
 
 
@@ -101,6 +101,7 @@ const select = state => {
 
 function App(props) {
     const {tickets,loading,query}=props
+    let {id} = useParams();
 
 
 
@@ -125,38 +126,39 @@ function App(props) {
         }else{
             return  intPrio(a.priority)-intPrio(b.priority)
         }
+    }
 
+    function filterTickets(tickets, status) {
+        return tickets.entries.filter(e=>e.values.Status===status).map(e=>incObj(e)).sort(sortTickets)
     }
 
     React.useEffect(()=>{
       setColumns({
             [1]: {
                 name: "Assigned",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e)).sort(sortTickets),
-                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").length
+                items: filterTickets(tickets, "Assigned"),
+                count: filterTickets(tickets, "Assigned").length
             },
             [2]: {
                 name: "In Progress",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e)).sort(sortTickets),
-                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").length
+                items: filterTickets(tickets, "In Progress"),
+                count: filterTickets(tickets, "In Progress").length
             },
             [3]: {
                 name: "Pending",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e)).sort(sortTickets),
-                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").length
+                items: filterTickets(tickets, "Pending"),
+                count: filterTickets(tickets, "Pending").length
             },
             [4]: {
                 name: "Resolved",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e)).sort(sortTickets),
-                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").length
+                items: filterTickets(tickets, "Resolved"),
+                count: filterTickets(tickets, "Resolved").length
             },
             [6]: {
                 name: "Cancelled",
-                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e)).sort(sortTickets),
-                count:tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").length
+                items: filterTickets(tickets, "Cancelled"),
+                count: filterTickets(tickets, "Cancelled").length
             }
-
-
         });
     },[tickets])
 
