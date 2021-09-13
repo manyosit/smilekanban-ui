@@ -64,10 +64,45 @@ export function restApi({ url,requestOptions,history,userManager }){
 
 
 
-export const getTickets = createAsyncThunk("request/getTickets",  async ({ history,userManager }) => {
+export const getTickets = createAsyncThunk("request/getTickets",  async ({ history,userManager },thunkAPI) => {
 
-    const response = await restApi({url:window._env_.REACT_APP_API_URL+"/api/arsys/v1/entry/HPD:Help Desk",requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
+    const query = thunkAPI.getState().kanban.query;
 
+    const response = await restApi({url:window._env_.REACT_APP_API_URL+"/api/arsys/v1/entry/HPD:Help Desk?q="+query,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
     return response;
 });
+export const setQuery = createAsyncThunk("request/getTickets",  async ({ selection,history,userManager }) => {
 
+    const user = await userManager.getUser()
+
+    let query
+    switch (selection){
+        case "Assigned to me":
+            query= "%27Assignee Login ID%27%20%3D%20%22"+user.profile.name+"%22"
+            break;
+        case "Assigned to my groups":
+            const myGroups = await restApi({url:window._env_.REACT_APP_API_URL+"/api/arsys/v1/entry/CTM:Support Group Association?q=%27Login ID%27%20%3D%20%22"+user.profile.name+"%22",requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
+
+            if (myGroups && myGroups.entries && Array.isArray(myGroups.entries)){
+
+                myGroups.entries.forEach((e,i)=>{
+
+                    if (i==0){
+                        query ="%27Assigned Group ID%27%20%3D%20%22"+(e.values["Support Group ID"])+"%22"
+                    }else{
+                        query = query + " OR %27Assigned Group ID%27%20%3D%20%22"+(e.values["Support Group ID"])+"%22"
+                    }
+                })
+            }
+            break;
+        default:
+            query = "1=2";
+            break;
+    }
+    const response = await restApi({url:window._env_.REACT_APP_API_URL+"/api/arsys/v1/entry/HPD:Help Desk?q="+query,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
+
+
+
+
+    return {query,response};
+});

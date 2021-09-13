@@ -7,7 +7,7 @@ import {
 
 
 
-import {getTickets} from "./asyncActions";
+import {getTickets,setQuery} from "./asyncActions";
 
 const middleware = [
     ...getDefaultMiddleware(),
@@ -20,7 +20,8 @@ const middleware = [
 const kanbanState = {
     loading:false,
     error:undefined,
-    accessToken:undefined
+    accessToken:undefined,
+    query:"1=2"
 };
 
 
@@ -34,7 +35,8 @@ const requestSlice = createSlice({
             return state = {
                 loading:false,
                 error:undefined,
-                accessToken:undefined
+                accessToken:undefined,
+                query:"1=2"
             };
 
         },
@@ -62,8 +64,21 @@ const requestSlice = createSlice({
         },
         [getTickets.fulfilled]: (state, action) => {
             state.loading = false;
-            state.tickets = action.payload.data;
+            state.tickets = action.payload;
 
+        },
+        [setQuery.pending]: state => {
+            state.loading = true;
+        },
+        [setQuery.rejected]: (state, action) => {
+            state.loading = false;
+
+            state.error = action.error.message;
+        },
+        [setQuery.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.query = action.payload.query;
+            state.tickets = action.payload.response;
         }
 
     }

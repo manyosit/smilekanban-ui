@@ -11,7 +11,7 @@ import {AuthContext} from "./util/Auth/AuthProvider";
 
 import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
-import {getTickets} from "./util/redux/asyncActions";
+import {getTickets,setQuery} from "./util/redux/asyncActions";
 
 const {Header,Content}=Layout
 
@@ -72,52 +72,60 @@ function incObj(inc){
 const select = state => {
     let sProps={}
     sProps.tickets=state.request.tickets;
-    sProps.loading=state.request.loading
+    sProps.loading=state.request.loading;
+    sProps.query=state.request.query;
     return sProps
 
 }
 
 function App(props) {
-    const {tickets,loading}=props
-    const columnsFromBackend = {
-        [1]: {
-            name: "Assigned",
-            items: tickets && tickets[0] && tickets[0].entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e))
-        },
-        [2]: {
-            name: "In Progress",
-            items: tickets && tickets[0] && tickets[0].entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e))
-        },
-        [3]: {
-            name: "Pending",
-            items: tickets && tickets[0] && tickets[0].entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e))
-        },
-        [4]: {
-            name: "Resolved",
-            items: tickets && tickets[0] && tickets[0].entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e))
-        },
-        [6]: {
-            name: "Cancelled",
-            items: tickets && tickets[0] &&  tickets[0].entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e))
-        }
-        
+    const {tickets,loading,query}=props
 
-    };
+
 
 
     const dispatch=useDispatch();
     const history = useHistory();
     const userManager = useContext(AuthContext);
-    const [columns, setColumns] = useState(columnsFromBackend);
+    const [columns, setColumns] = useState([]);
     const [showWorkLogs,setShowWorklogs]=useState(false);
     const [workLogInfos,setWorkLogInfos]=useState({});
 
 
 
     React.useEffect(()=>{
-        dispatch(getTickets({userManager,history}))
+        dispatch(setQuery({selection:"Assigned to me",history,userManager}))
 
     },[])
+
+    React.useEffect(()=>{
+      setColumns({
+            [1]: {
+                name: "Assigned",
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e))
+            },
+            [2]: {
+                name: "In Progress",
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e))
+            },
+            [3]: {
+                name: "Pending",
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e))
+            },
+            [4]: {
+                name: "Resolved",
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e))
+            },
+            [6]: {
+                name: "Cancelled",
+                items: tickets && tickets.entries && tickets.entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e))
+            }
+
+
+        });
+    },[tickets])
+
+
     const menuAction=(action,item)=>{
 
         switch(action){
@@ -143,8 +151,13 @@ function App(props) {
           <Layout>
               <Header style={{textAlign:"left"}}>
                   <Radio.Group
-                    options={["Assigned to Me","Assigned to my Groups"]}
+                    options={["Assigned to me","Assigned to my groups"]}
                     optionType={"button"}
+                    value={"Assigned to my groups"}
+                    onChange={(k)=>{
+
+                        dispatch(setQuery({selection:k.target.value,history,userManager}))
+                    }}
                   />
               </Header>
               <Content>
