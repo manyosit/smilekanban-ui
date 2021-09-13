@@ -100,6 +100,7 @@ function App(props) {
             name: "Cancelled",
             items: tickets && tickets[0] &&  tickets[0].entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e))
         }
+        
 
     };
 
