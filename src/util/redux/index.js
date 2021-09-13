@@ -7,7 +7,7 @@ import {
 
 
 
-import {getClient} from "./asyncActions";
+import {getTickets} from "./asyncActions";
 
 const middleware = [
     ...getDefaultMiddleware(),
@@ -52,17 +52,17 @@ const requestSlice = createSlice({
 
     },
     extraReducers:{
-        [getClient.pending]: state => {
-            state.clientConfLoading = true;
+        [getTickets.pending]: state => {
+            state.loading = true;
         },
-        [getClient.rejected]: (state, action) => {
-            state.clientConfLoading = false;
+        [getTickets.rejected]: (state, action) => {
+            state.loading = false;
 
             state.error = action.error.message;
         },
-        [getClient.fulfilled]: (state, action) => {
-            state.clientConfLoading = false;
-            state.clientConf = action.payload.data;
+        [getTickets.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.tickets = action.payload.data;
 
         }
 

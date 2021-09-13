@@ -1,16 +1,17 @@
 import React,{useContext,useState} from "react";
-import {Layout,Radio,Card,Tag,Descriptions,Menu,Dropdown,message} from "antd";
+import {Layout,Radio,message,Spin} from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import './App.css';
 import ErrorHandler from "./util/ErrorHandler";
-import {useDispatch} from "react-redux";
+import {useDispatch,connect} from "react-redux";
 
 import {useHistory} from "react-router-dom";
 import {AuthContext} from "./util/Auth/AuthProvider";
 
-import apiresonse from "./apiresponse.json"
+
 import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
+import {getTickets} from "./util/redux/asyncActions";
 
 const {Header,Content}=Layout
 
@@ -18,29 +19,7 @@ const {Header,Content}=Layout
 
 
 
-const columnsFromBackend = {
-    [1]: {
-        name: "Assigned",
-        items: apiresonse.entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e))
-    },
-    [2]: {
-        name: "In Progress",
-        items: apiresonse.entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e))
-    },
-    [3]: {
-        name: "Pending",
-        items: apiresonse.entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e))
-    },
-    [4]: {
-        name: "Resolved",
-        items: apiresonse.entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e))
-    },
-    [6]: {
-        name: "Cancelled",
-        items: apiresonse.entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e))
-    }
 
-};
 
 const onDragEnd = (result, columns, setColumns) => {
     if (!result.destination) return;
@@ -90,8 +69,40 @@ function incObj(inc){
     }
 }
 
+const select = state => {
+    let sProps={}
+    sProps.tickets=state.request.tickets;
+    sProps.loading=state.request.loading
+    return sProps
 
-function App() {
+}
+
+function App(props) {
+    const {tickets,loading}=props
+    const columnsFromBackend = {
+        [1]: {
+            name: "Assigned",
+            items: tickets && tickets[0] && tickets[0].entries.filter(e=>e.values.Status==="Assigned").map(e=>incObj(e))
+        },
+        [2]: {
+            name: "In Progress",
+            items: tickets && tickets[0] && tickets[0].entries.filter(e=>e.values.Status==="In Progress").map(e=>incObj(e))
+        },
+        [3]: {
+            name: "Pending",
+            items: tickets && tickets[0] && tickets[0].entries.filter(e=>e.values.Status==="Pending").map(e=>incObj(e))
+        },
+        [4]: {
+            name: "Resolved",
+            items: tickets && tickets[0] && tickets[0].entries.filter(e=>e.values.Status==="Resolved").map(e=>incObj(e))
+        },
+        [6]: {
+            name: "Cancelled",
+            items: tickets && tickets[0] &&  tickets[0].entries.filter(e=>e.values.Status==="Cancelled").map(e=>incObj(e))
+        }
+
+    };
+
 
     const dispatch=useDispatch();
     const history = useHistory();
@@ -100,6 +111,12 @@ function App() {
     const [showWorkLogs,setShowWorklogs]=useState(false);
     const [workLogInfos,setWorkLogInfos]=useState({});
 
+
+
+    React.useEffect(()=>{
+        dispatch(getTickets({userManager,history}))
+
+    },[])
     const menuAction=(action,item)=>{
 
         switch(action){
@@ -130,7 +147,7 @@ function App() {
                   />
               </Header>
               <Content>
-
+                  <Spin spinning={loading}>
                   <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
                       <DragDropContext
                           onDragEnd={result => onDragEnd(result, columns, setColumns)}
@@ -162,7 +179,7 @@ function App() {
                                                               minHeight: 500
                                                           }}
                                                       >
-                                                          {column.items.map((item, index) => {
+                                                          {column.items && column.items.map((item, index) => {
                                                               return (
                                                                   <Draggable
                                                                       key={item.id}
@@ -216,6 +233,7 @@ function App() {
                     handleClose={handleClose}
                     item={workLogInfos}
                 />
+                  </Spin>
               </Content>
           </Layout>
         </div>
@@ -223,4 +241,4 @@ function App() {
   );
 }
 
-export default App;
+export default connect(select)(App)

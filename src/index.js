@@ -18,7 +18,7 @@ import {AuthProvider} from "./util/Auth/AuthProvider";
 ReactDOM.render(
   <React.StrictMode>
       <Provider store={store}>
-
+          <AuthProvider>
           <Router>
               <Switch>
 
@@ -33,7 +33,7 @@ ReactDOM.render(
               </Switch>
 
           </Router>
-          <AuthProvider>
+
           </AuthProvider>
       </Provider>
   </React.StrictMode>,
