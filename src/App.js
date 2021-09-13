@@ -90,7 +90,7 @@ function App(props) {
     const [columns, setColumns] = useState([]);
     const [showWorkLogs,setShowWorklogs]=useState(false);
     const [workLogInfos,setWorkLogInfos]=useState({});
-
+    const [radioVal,setRadioVal]=useState("Assigned to me");
 
 
     React.useEffect(()=>{
@@ -153,9 +153,9 @@ function App(props) {
                   <Radio.Group
                     options={["Assigned to me","Assigned to my groups"]}
                     optionType={"button"}
-                    value={"Assigned to my groups"}
+                    value={radioVal}
                     onChange={(k)=>{
-
+                        setRadioVal(k.target.value)
                         dispatch(setQuery({selection:k.target.value,history,userManager}))
                     }}
                   />
