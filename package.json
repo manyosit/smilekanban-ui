@@ -23,7 +23,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test a",
     "eject": "react-scripts eject",
     "dev": "chmod +x ./env_dev.sh && ./env_dev.sh && cp env-config.js ./public/ && react-scripts start"
   },
