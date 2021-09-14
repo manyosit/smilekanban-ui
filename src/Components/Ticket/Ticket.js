@@ -31,8 +31,10 @@ const Ticket=(props)=>{
     const {item, menuAction, ticketConfig}=props
     let listItems = []
     if (ticketConfig && ticketConfig.columns) {
-        const listItems = Object.keys(ticketConfig.columns).map(item => {
-            <Descriptions.Item label="Summary" span={3}>{item}</Descriptions.Item>
+        listItems = Object.keys(ticketConfig.cardFields).map((cardLabel) => {
+            const fieldName = ticketConfig.cardFields[cardLabel]
+            console.log('field', item)
+            return <Descriptions.Item label={cardLabel} span={3}>{item[fieldName]}</Descriptions.Item>
         })
     }
 
@@ -68,10 +70,6 @@ const Ticket=(props)=>{
         bodyStyle={{padding:0}}
     >
         <Descriptions  bordered size={"small"} contentStyle={{fontSize:"10px"}} labelStyle={{fontSize:"10px"}}>
-            <Descriptions.Item label="Summary" span={3}>{item.summary}</Descriptions.Item>
-            <Descriptions.Item label="Assigned Group"span={3}> {item.assignedGroup}</Descriptions.Item>
-            <Descriptions.Item label="Assignee"span={3}>{item.assignee}</Descriptions.Item>
-            <Descriptions.Item label="Created"span={3}>{item.submitDate}</Descriptions.Item>
             {listItems}
         </Descriptions>
     </Card>

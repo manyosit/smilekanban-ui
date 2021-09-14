@@ -58,17 +58,6 @@ const onDragEnd = (result, columns, setColumns) => {
     }
 };
 
-function incObj(inc){
-    return {
-        assignee:inc.values["Assignee"],
-        assignedGroup:inc.values["Assigned Group"] ,
-        id:inc.values["Incident Number"] ,
-        priority:inc.values["Priority"] ,
-        submitDate:inc.values["Submit Date"] ,
-        summary:inc.values["Description"]
-    }
-}
-
 const intPrio=(strPrio)=>{
     let prio;
     switch(strPrio){
@@ -131,7 +120,7 @@ function App(props) {
 
     function filterTickets(tickets, status) {
         if (tickets && tickets.entries && Array.isArray(tickets.entries)) {
-            return tickets.entries.filter(e=>e.values.Status===status).map(e=>incObj(e)).sort(sortTickets)
+            return tickets.entries.filter(e=>e.values.Status===status).map(e=>e.values).sort(sortTickets)
         } else {
             return []
         }
