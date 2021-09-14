@@ -7,7 +7,7 @@ import {
 
 
 
-import {getTickets,setQuery} from "./asyncActions";
+import {setQuery, setTicketConfig} from "./asyncActions";
 
 const middleware = [
     ...getDefaultMiddleware(),
@@ -54,19 +54,6 @@ const requestSlice = createSlice({
 
     },
     extraReducers:{
-        [getTickets.pending]: state => {
-            state.loading = true;
-        },
-        [getTickets.rejected]: (state, action) => {
-            state.loading = false;
-
-            state.error = action.error.message;
-        },
-        [getTickets.fulfilled]: (state, action) => {
-            state.loading = false;
-            state.tickets = action.payload;
-
-        },
         [setQuery.pending]: state => {
             state.loading = true;
         },
@@ -79,6 +66,18 @@ const requestSlice = createSlice({
             state.loading = false;
             state.query = action.payload.query;
             state.tickets = action.payload.response;
+        },
+        [setTicketConfig.pending]: state => {
+            state.loading = true;
+        },
+        [setTicketConfig.rejected]: (state, action) => {
+            state.loading = false;
+
+            state.error = action.error.message;
+        },
+        [setTicketConfig.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.ticketConfig = action.payload.ticketConfig;
         }
 
     }

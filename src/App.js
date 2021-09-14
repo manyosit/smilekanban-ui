@@ -11,7 +11,7 @@ import {AuthContext} from "./util/Auth/AuthProvider";
 
 import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
-import {getTickets,setQuery} from "./util/redux/asyncActions";
+import {getTickets,setQuery, setTicketConfig} from "./util/redux/asyncActions";
 
 const {Header,Content}=Layout
 
@@ -95,15 +95,14 @@ const select = state => {
     sProps.tickets=state.request.tickets;
     sProps.loading=state.request.loading;
     sProps.query=state.request.query;
+    sProps.ticketConfig=state.request.ticketConfig;
     return sProps
 
 }
 
 function App(props) {
-    const {tickets,loading,query}=props
+    const {tickets,loading,query, ticketConfig}=props
     let {id} = useParams();
-
-
 
 
     const dispatch=useDispatch();
@@ -114,10 +113,12 @@ function App(props) {
     const [workLogInfos,setWorkLogInfos]=useState({});
     const [radioVal,setRadioVal]=useState("Assigned to me");
 
+    React.useEffect(()=>{
+        dispatch(setTicketConfig({id, history, userManager}))
+    },[])
 
     React.useEffect(()=>{
-        dispatch(setQuery({selection:"Assigned to me",history,userManager}))
-
+        dispatch(setQuery({selection:"Assigned to me", ticketConfig, history, userManager}))
     },[])
 
     const sortTickets=(a,b)=>{
@@ -197,9 +198,10 @@ function App(props) {
                     value={radioVal}
                     onChange={(k)=>{
                         setRadioVal(k.target.value)
-                        dispatch(setQuery({selection:k.target.value,history,userManager}))
+                        dispatch(setQuery({selection:k.target.value, ticketConfig, history, userManager}))
                     }}
                   />
+                  {ticketConfig && ticketConfig.formName}
               </Header>
               <Content>
                   <Spin spinning={loading}>

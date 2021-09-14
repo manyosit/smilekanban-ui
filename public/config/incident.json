@@ -1,5 +1,6 @@
 {
   "formName": "HPD:Help Desk",
+  "idField": "Incident Number",
   "filter": [
     {
       "name": "Assigned to me",
@@ -20,7 +21,6 @@
     "Assignee": "Assignee",
     "Created": "Submit Date"
   },
-  "idField": "Incident Number",
   "columnField": "Status",
   "columns": {
     "Assigned": {},

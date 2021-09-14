@@ -3,10 +3,6 @@ import {
 } from "@reduxjs/toolkit";
 
 
-
-
-
-
 export function restApi({ url,requestOptions,history,userManager }){
 
     return userManager.getUser().then(user=>{
@@ -60,20 +56,21 @@ export function restApi({ url,requestOptions,history,userManager }){
 })
 }
 
-
-
-
-
-export const getTickets = createAsyncThunk("request/getTickets",  async ({ history,userManager },thunkAPI) => {
-
-    const query = thunkAPI.getState().kanban.query;
-
-    const response = await restApi({url:window._env_.REACT_APP_API_URL+"/api/arsys/v1/entry/HPD:Help Desk?q="+query,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
-    return response;
+export const setTicketConfig = createAsyncThunk("request/getTicketConfig",  async ({ id, history,userManager },thunkAPI) => {
+    const path = `/config/${id}.json`
+    const response = await fetch(path, {
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        }
+    });
+    const data = await response.json();
+    const ticketConfig = data
+    return {ticketConfig}
 });
 
 
-export const setQuery = createAsyncThunk("request/getTickets",  async ({ selection,history,userManager }) => {
+export const setQuery = createAsyncThunk("request/getTickets",  async ({ selection, ticketConfig, history,userManager }) => {
 
     const user = await userManager.getUser()
 
@@ -101,10 +98,7 @@ export const setQuery = createAsyncThunk("request/getTickets",  async ({ selecti
             query = "1=2";
             break;
     }
-    const response = await restApi({url:window._env_.REACT_APP_API_URL+"/api/arsys/v1/entry/HPD:Help Desk?q="+query,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
-
-
-
+    const response = await restApi({url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${ticketConfig.formName}?q=${query}`,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
 
     return {query,response};
 });
