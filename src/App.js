@@ -269,6 +269,7 @@ function App(props) {
                                                                                   <Ticket
                                                                                     item={item}
                                                                                     menuAction={menuAction}
+                                                                                    ticketConfig={ticketConfig}
                                                                                   />
 
 

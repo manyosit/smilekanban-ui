@@ -28,7 +28,13 @@ function getPrioColor(prio){
 
 const Ticket=(props)=>{
 
-    const {item,menuAction}=props
+    const {item, menuAction, ticketConfig}=props
+    let listItems = []
+    if (ticketConfig && ticketConfig.columns) {
+        const listItems = Object.keys(ticketConfig.columns).map(item => {
+            <Descriptions.Item label="Summary" span={3}>{item}</Descriptions.Item>
+        })
+    }
 
     return(
     <Card
@@ -66,7 +72,7 @@ const Ticket=(props)=>{
             <Descriptions.Item label="Assigned Group"span={3}> {item.assignedGroup}</Descriptions.Item>
             <Descriptions.Item label="Assignee"span={3}>{item.assignee}</Descriptions.Item>
             <Descriptions.Item label="Created"span={3}>{item.submitDate}</Descriptions.Item>
-
+            {listItems}
         </Descriptions>
     </Card>
     )
