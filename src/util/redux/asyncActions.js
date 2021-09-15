@@ -86,7 +86,7 @@ export const setQuery = createAsyncThunk("request/getTickets",  async ({ selecti
 
                 myGroups.entries.forEach((e,i)=>{
 
-                    if (i==0){
+                    if (i===0){
                         query ="%27Assigned Group ID%27%20%3D%20%22"+(e.values["Support Group ID"])+"%22"
                     }else{
                         query = query + " OR %27Assigned Group ID%27%20%3D%20%22"+(e.values["Support Group ID"])+"%22"

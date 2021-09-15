@@ -3,26 +3,13 @@ import {Card, Descriptions, Dropdown, Tag,Menu} from "antd";
 import { DownOutlined } from '@ant-design/icons';
 
 
-function getPrioColor(prio){
-    let color;
-    switch (prio){
-        case "Critical":
-            color="red";
-            break;
-        case "High":
-            color="orange";
-            break;
-        case "Medium":
-            color="gold";
-            break;
-        case "Low":
-            color="green";
-            break;
-        default:
-            color="red";
-            break;
+function getTagColor(ticketConfig, tag) {
+    if (ticketConfig && ticketConfig.header && ticketConfig.header.tagColorMapping) {
+        console.log(tag)
+        return ticketConfig.header.tagColorMapping[tag] || ticketConfig.header.tagColorMapping['default'] || 'blue'
+    } else {
+        return "blue"
     }
-    return color;
 }
 
 
@@ -33,14 +20,13 @@ const Ticket=(props)=>{
     if (ticketConfig && ticketConfig.columns) {
         listItems = Object.keys(ticketConfig.cardFields).map((cardLabel) => {
             const fieldName = ticketConfig.cardFields[cardLabel]
-            console.log('field', item)
             return <Descriptions.Item label={cardLabel} span={3}>{item[fieldName]}</Descriptions.Item>
         })
     }
 
     return(
     <Card
-        title={<><Tag color={getPrioColor(item.priority)}>{item.priority}</Tag>{item.id}</>}
+        title={<><Tag color={getTagColor(ticketConfig, item[ticketConfig.header.tagField])}>{item[ticketConfig.header.tagField]}</Tag>{item[ticketConfig.header.titleField]}</>}
         headStyle={{fontSize:"14px"}}
         extra={
             <Dropdown overlay={

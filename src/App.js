@@ -110,6 +110,7 @@ function App(props) {
         dispatch(setQuery({selection:"Assigned to me", ticketConfig, history, userManager}))
     },[])
 
+
     const sortTickets=(a,b)=>{
         if ((a.priority)===b.priority) {
             return b.submitDate - a.submitDate
@@ -233,8 +234,8 @@ function App(props) {
                                                           {column.items && column.items.map((item, index) => {
                                                               return (
                                                                   <Draggable
-                                                                      key={item.id}
-                                                                      draggableId={item.id}
+                                                                      key={item[ticketConfig.idField]}
+                                                                      draggableId={item[ticketConfig.idField]}
                                                                       index={index}
                                                                   >
                                                                       {(provided, snapshot) => {

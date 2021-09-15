@@ -13,7 +13,14 @@
   ],
   "header": {
     "titleField": "Incident Number",
-    "tagField": "Priority"
+    "tagField": "Priority",
+    "tagColorMapping": {
+      "Critical": "red",
+      "High": "orange",
+      "Medium": "gold",
+      "Low": "green",
+      "default": "blue"
+    }
   },
   "cardFields": {
     "Summary": "Description",
