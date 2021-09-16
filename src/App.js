@@ -16,11 +16,6 @@ import {getTickets,setQuery, setTicketConfig} from "./util/redux/asyncActions";
 const {Header,Content}=Layout
 
 
-
-
-
-
-
 const onDragEnd = (result, columns, setColumns) => {
     if (!result.destination) return;
     const { source, destination } = result;
@@ -127,35 +122,25 @@ function App(props) {
         }
     }
 
+    function getColumnDef(ticketConfig, tickets) {
+        let colNumber = 1
+        const colDef = {}
+        if (ticketConfig && ticketConfig.columns) {
+            Object.keys(ticketConfig.columns).forEach(colConfigName => {
+                colDef[colNumber] = {
+                    name: colConfigName,
+                    items: filterTickets(tickets, colConfigName),
+                    count: filterTickets(tickets, colConfigName).length
+                }
+                colNumber++
+            })
+        }
+        return colDef
+    }
+
     React.useEffect(()=>{
-      setColumns({
-            [1]: {
-                name: "Assigned",
-                items: filterTickets(tickets, "Assigned"),
-                count: filterTickets(tickets, "Assigned").length
-            },
-            [2]: {
-                name: "In Progress",
-                items: filterTickets(tickets, "In Progress"),
-                count: filterTickets(tickets, "In Progress").length
-            },
-            [3]: {
-                name: "Pending",
-                items: filterTickets(tickets, "Pending"),
-                count: filterTickets(tickets, "Pending").length
-            },
-            [4]: {
-                name: "Resolved",
-                items: filterTickets(tickets, "Resolved"),
-                count: filterTickets(tickets, "Resolved").length
-            },
-            [6]: {
-                name: "Cancelled",
-                items: filterTickets(tickets, "Cancelled"),
-                count: filterTickets(tickets, "Cancelled").length
-            }
-        });
-    },[tickets])
+      setColumns(getColumnDef(ticketConfig, tickets));
+    },[tickets, ticketConfig])
 
 
     const menuAction=(action,item)=>{

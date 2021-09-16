@@ -5,7 +5,6 @@ import { DownOutlined } from '@ant-design/icons';
 
 function getTagColor(ticketConfig, tag) {
     if (ticketConfig && ticketConfig.header && ticketConfig.header.tagColorMapping) {
-        console.log(tag)
         return ticketConfig.header.tagColorMapping[tag] || ticketConfig.header.tagColorMapping['default'] || 'blue'
     } else {
         return "blue"
