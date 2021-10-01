@@ -1,5 +1,5 @@
 import React,{useContext,useState} from "react";
-import {Layout,Radio,message,Spin,Tag} from "antd";
+import {Layout,Radio,message,Spin,Tag,Button} from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import './App.css';
 import ErrorHandler from "./util/ErrorHandler";
@@ -54,6 +54,7 @@ const onDragEnd = (result, columns, setColumns) => {
 };
 
 const intPrio=(strPrio)=>{
+
     let prio;
     switch(strPrio){
         case "Critical":
@@ -96,6 +97,20 @@ function App(props) {
     const [showWorkLogs,setShowWorklogs]=useState(false);
     const [workLogInfos,setWorkLogInfos]=useState({});
     const [radioVal,setRadioVal]=useState("Assigned to me");
+    const [columnWidth,setColumnWidth] = useState({})
+
+    React.useEffect(()=>{
+        const colDef = {}
+        ticketConfig && ticketConfig.columns && Object.keys(ticketConfig.columns).forEach(
+            colConfigName => {
+
+                colDef[colConfigName] = "block"
+
+
+            })
+
+        setColumnWidth(colDef)
+    },[ticketConfig])
 
     React.useEffect(()=>{
         dispatch(setTicketConfig({id, history, userManager}))
@@ -187,85 +202,134 @@ function App(props) {
                           {Object.entries(columns).map(([columnId, column], index) => {
 
                               return (
+                                <div>
+                                    <h2  onClick={()=>{
+                                        var displayVal;
+                                        if (columnWidth[column.name]==="block"){
+                                            displayVal="small"
+                                        }else{
+                                            displayVal="block"
+                                        }
+                                        setColumnWidth({...columnWidth,[column.name]:displayVal})
+                                    }}
+                                    style={{display:"tablecell",float:"none",cursor:"pointer"}}
+                                    >
+                                        { (columnWidth[column.name] === "block") && column.name}<Tag color="blue" style={{top:"-3px", position:"relative", left:"3px"}}>{column.count}</Tag>
 
-                                  <div
-                                      style={{
-                                          display: "flex",
-                                          flexDirection: "column",
-                                          alignItems: "center"
-                                      }}
-                                      key={columnId}
-                                  >
-                                        <h2 >{column.name}<Tag color="blue" style={{top:"-3px", position:"relative", left:"3px"}}>{column.count}</Tag></h2>
-                                  <div style={{ margin: 8 }}>
-                                          <Droppable droppableId={columnId} key={columnId}>
-                                              {(provided, snapshot) => {
-                                                  return (
+                                    </h2>
+                                    {
+                                        (columnWidth[column.name] === "block")
+                                       ? (
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                    alignItems: "center",
 
-
-                                                      <div
-                                                          {...provided.droppableProps}
-                                                          ref={provided.innerRef}
-                                                          style={{
-                                                              background: snapshot.isDraggingOver
-                                                                  ? "lightblue"
-                                                                  : "lightgrey",
-                                                              padding: 4,
-                                                              width: 250,
-                                                              minHeight: 500
-                                                          }}
-                                                      >
-
-                                                          {column.items && column.items.map((item, index) => {
-                                                              return (
-                                                                  <Draggable
-                                                                      key={item[ticketConfig.idField]}
-                                                                      draggableId={item[ticketConfig.idField]}
-                                                                      index={index}
-                                                                  >
-                                                                      {(provided, snapshot) => {
-                                                                          return (
-                                                                              <div
-                                                                                  ref={provided.innerRef}
-                                                                                  {...provided.draggableProps}
-                                                                                  {...provided.dragHandleProps}
-                                                                                  style={{
-                                                                                      userSelect: "none",
-                                                                                      padding: snapshot.isDragging?5:0,
-                                                                                      margin: "0 0 8px 0",
-                                                                                      minHeight: "50px",
-                                                                                      backgroundColor: snapshot.isDragging
-                                                                                          ? "orange"
-                                                                                          : "white",
-                                                                                      color: "white",
-                                                                                      ...provided.draggableProps.style
-                                                                                  }}
-                                                                              >
-                                                                                  <Ticket
-                                                                                    item={item}
-                                                                                    menuAction={menuAction}
-                                                                                    ticketConfig={ticketConfig}
-                                                                                  />
+                                                }}
+                                                key={columnId}
+                                            >
 
 
-                                                                              </div>
-                                                                          );
-                                                                      }}
-                                                                  </Draggable>
-                                                              );
-                                                          })}
-                                                          {provided.placeholder}
-                                                      </div>
+                                                <div style={{ margin: 1, }}>
+                                                    <Droppable droppableId={columnId} key={columnId}>
+                                                        {(provided, snapshot) => {
+                                                            return (
 
-                                                  );
 
-                                              }}
+                                                                <div
+                                                                    {...provided.droppableProps}
+                                                                    ref={provided.innerRef}
+                                                                    style={{
+                                                                        background: snapshot.isDraggingOver
+                                                                            ? "lightblue"
+                                                                            : "lightgrey",
+                                                                        padding: 4,
+                                                                        width: (window.innerWidth - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length,
 
-                                          </Droppable>
-                                      </div>
+                                                                        minHeight: 500
+                                                                    }}
+                                                                >
 
-                                  </div>
+                                                                    {column.items && column.items.map((item, index) => {
+                                                                        return (
+                                                                            <Draggable
+                                                                                key={item[ticketConfig.idField]}
+                                                                                draggableId={item[ticketConfig.idField]}
+                                                                                index={index}
+                                                                            >
+                                                                                {(provided, snapshot) => {
+                                                                                    return (
+                                                                                        <div
+                                                                                            ref={provided.innerRef}
+                                                                                            {...provided.draggableProps}
+                                                                                            {...provided.dragHandleProps}
+                                                                                            style={{
+                                                                                                userSelect: "none",
+                                                                                                padding: snapshot.isDragging?5:0,
+                                                                                                margin: "0 0 8px 0",
+                                                                                                minHeight: "50px",
+                                                                                                backgroundColor: snapshot.isDragging
+                                                                                                    ? "orange"
+                                                                                                    : "white",
+                                                                                                color: "white",
+                                                                                                ...provided.draggableProps.style
+                                                                                            }}
+                                                                                        >
+                                                                                            <Ticket
+                                                                                                item={item}
+                                                                                                menuAction={menuAction}
+                                                                                                ticketConfig={ticketConfig}
+                                                                                            />
 
+
+                                                                                        </div>
+                                                                                    );
+                                                                                }}
+                                                                            </Draggable>
+                                                                        );
+                                                                    })}
+                                                                    {provided.placeholder}
+                                                                </div>
+
+                                                            );
+
+                                                        }}
+
+                                                    </Droppable>
+                                                </div>
+
+                                            </div>
+                                        )
+                                            :(
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        alignItems: "center",
+
+                                                    }}
+                                                    key={columnId}
+                                                >
+                                                    <div
+
+                                                        style={{
+                                                            textOrientation:"sideways",
+                                                            writingMode:"vertical-rl",
+                                                            background: "lightgrey",
+                                                            padding: 4,
+                                                            marginTop:1,
+
+                                                            minHeight: 500
+                                                        }}
+                                                    >
+                                                        {column.name}
+                                                </div>
+                                                </div>
+                                            )
+                                    }
+
+                                </div>
                               );
                           })}
                       </DragDropContext>
