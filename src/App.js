@@ -1,5 +1,6 @@
 import React,{useContext,useState} from "react";
-import {Layout,Radio,message,Spin,Tag,Button} from "antd";
+import {FilterOutlined,FileSearchOutlined } from "@ant-design/icons"
+import {Layout,message,Spin,Tag,Select} from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import './App.css';
 import ErrorHandler from "./util/ErrorHandler";
@@ -13,8 +14,8 @@ import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
 import {getTickets,setQuery, setTicketConfig} from "./util/redux/asyncActions";
 
-const {Header,Content}=Layout
-
+const {Content}=Layout
+const {Option}=Select
 
 const onDragEnd = (result, columns, setColumns) => {
     if (!result.destination) return;
@@ -180,19 +181,33 @@ function App(props) {
   return (
       <ErrorHandler>
         <div className="App">
+            <div className="headMenu" style={{  height:"55px",background:"#646464"}} />
+            <img src="/logo.png" style={{maxHeight:"50px",left:20,top:0, position:"absolute"}}/>
+            <div  style={{  padding: "10px",position:"absolute",right:5,top:0}} >
+
+                <FileSearchOutlined style={{margin:"10px"}} />
+                <Select defaultValue="HPD:Help Desk" style={{ width: 300}} onChange={(k)=>{
+                    console.log(k);
+                }}>
+                    <Option value="HPD:Help Desk">Incident</Option>
+
+
+                </Select>
+                <FilterOutlined style={{margin:"10px"}}/>
+                <Select defaultValue="Assigned to me" style={{ width: 300}} onChange={(k)=>{
+                    setRadioVal(k)
+                    dispatch(setQuery({selection:k, ticketConfig, history, userManager}))
+                }}>
+                    <Option value="Assigned to me">Assigned to me</Option>
+                    <Option value="Assigned to my groups">Assigned to my groups</Option>
+
+                </Select>
+            </div>
+
+
+
           <Layout>
-              <Header style={{textAlign:"left"}}>
-                  <Radio.Group
-                    options={["Assigned to me","Assigned to my groups"]}
-                    optionType={"button"}
-                    value={radioVal}
-                    onChange={(k)=>{
-                        setRadioVal(k.target.value)
-                        dispatch(setQuery({selection:k.target.value, ticketConfig, history, userManager}))
-                    }}
-                  />
-                  {ticketConfig && ticketConfig.formName}
-              </Header>
+
               <Content>
                   <Spin spinning={loading}>
                   <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
@@ -202,8 +217,8 @@ function App(props) {
                           {Object.entries(columns).map(([columnId, column], index) => {
 
                               return (
-                                <div>
-                                    <h2  onClick={()=>{
+                                <div >
+                                    <h4  onClick={()=>{
                                         var displayVal;
                                         if (columnWidth[column.name]==="block"){
                                             displayVal="small"
@@ -212,11 +227,11 @@ function App(props) {
                                         }
                                         setColumnWidth({...columnWidth,[column.name]:displayVal})
                                     }}
-                                    style={{display:"tablecell",float:"none",cursor:"pointer"}}
+                                    style={{display:"tablecell",float:"none",cursor:"pointer",marginTop:"8px", borderLeft:"2px solid white"}}
                                     >
-                                        { (columnWidth[column.name] === "block") && column.name}<Tag color="blue" style={{top:"-3px", position:"relative", left:"3px"}}>{column.count}</Tag>
+                                        { (columnWidth[column.name] === "block") && column.name}<Tag color="blue" style={{top:"-2px", position:"relative", left:(columnWidth[column.name] === "block")?"12px":"3px"}}>{column.count}</Tag>
 
-                                    </h2>
+                                    </h4>
                                     {
                                         (columnWidth[column.name] === "block")
                                        ? (
@@ -231,7 +246,7 @@ function App(props) {
                                             >
 
 
-                                                <div style={{ margin: 1, }}>
+                                                <div style={{ margin: 1,borderTop:"1px solid #80808073" }}>
                                                     <Droppable droppableId={columnId} key={columnId}>
                                                         {(provided, snapshot) => {
                                                             return (
@@ -247,7 +262,7 @@ function App(props) {
                                                                         padding: 4,
                                                                         width: (window.innerWidth - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length,
 
-                                                                        minHeight: 500
+                                                                        minHeight: window.innerHeight-97
                                                                     }}
                                                                 >
 
@@ -266,9 +281,11 @@ function App(props) {
                                                                                             {...provided.dragHandleProps}
                                                                                             style={{
                                                                                                 userSelect: "none",
-                                                                                                padding: snapshot.isDragging?5:0,
-                                                                                                margin: "0 0 8px 0",
+
+                                                                                                margin: "0 0 20px 0",
                                                                                                 minHeight: "50px",
+                                                                                                borderColor:"orange",
+                                                                                                border:snapshot.isDragging?"#d9363e 1px solid!important":"none",
                                                                                                 backgroundColor: snapshot.isDragging
                                                                                                     ? "orange"
                                                                                                     : "white",
@@ -319,8 +336,7 @@ function App(props) {
                                                             background: "lightgrey",
                                                             padding: 4,
                                                             marginTop:1,
-
-                                                            minHeight: 500
+                                                            minHeight: window.innerHeight-97
                                                         }}
                                                     >
                                                         {column.name}
