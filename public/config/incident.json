@@ -30,12 +30,47 @@
   },
   "columnField": "Status",
   "columns": {
-    "Assigned": {},
-    "In Progress": {},
-    "Pending": {},
-    "Resolved": {},
-    "Cancelled": {},
-    "Closed": {}
+    "Assigned": {
+      "fields": [
+
+      ],
+      "allowedStatus": ["In Progress","Pending","Cancelled"]
+    },
+    "In Progress": {
+      "fields": [
+        {
+          "id": "Assignee",
+          "required":true
+        },
+        {
+          "id": "Assinged Group",
+          "required":true
+        }
+      ],
+      "allowedStatus": ["In Progress","Pending","Cancelled","Resolved","Assigned"]
+    },
+    "Pending": {
+      "allowedStatus": ["In Progress","Cancelled","Assigned"]
+    },
+    "Resolved": {
+      "fields": [
+        {
+          "id": "Status Reason",
+          "required":true
+        },
+        {
+          "id": "Resolution",
+          "required":true
+        }
+      ],
+      "allowedStatus": ["Assigned","Cancelled"]
+    },
+    "Cancelled": {
+      "allowedStatus":[]
+    },
+    "Closed": {
+      "allowedStatus":[]
+    }
   },
   "actions": {
     "Show Worklogs": {

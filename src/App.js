@@ -17,42 +17,7 @@ import {getTickets,setQuery, setTicketConfig} from "./util/redux/asyncActions";
 const {Content}=Layout
 const {Option}=Select
 
-const onDragEnd = (result, columns, setColumns) => {
-    if (!result.destination) return;
-    const { source, destination } = result;
 
-    if (source.droppableId !== destination.droppableId) {
-        const sourceColumn = columns[source.droppableId];
-        const destColumn = columns[destination.droppableId];
-        const sourceItems = [...sourceColumn.items];
-        const destItems = [...destColumn.items];
-        const [removed] = sourceItems.splice(source.index, 1);
-        destItems.splice(destination.index, 0, removed);
-        setColumns({
-            ...columns,
-            [source.droppableId]: {
-                ...sourceColumn,
-                items: sourceItems
-            },
-            [destination.droppableId]: {
-                ...destColumn,
-                items: destItems
-            }
-        });
-    } else {
-        const column = columns[source.droppableId];
-        const copiedItems = [...column.items];
-        const [removed] = copiedItems.splice(source.index, 1);
-        copiedItems.splice(destination.index, 0, removed);
-        setColumns({
-            ...columns,
-            [source.droppableId]: {
-                ...column,
-                items: copiedItems
-            }
-        });
-    }
-};
 
 const intPrio=(strPrio)=>{
 
@@ -99,7 +64,77 @@ function App(props) {
     const [workLogInfos,setWorkLogInfos]=useState({});
     const [radioVal,setRadioVal]=useState("Assigned to me");
     const [columnWidth,setColumnWidth] = useState({})
+    const [blocked,setBlocked] = useState(false)
 
+
+
+    const allowedStatus=(source,destination)=>{
+        if (destination && destination.droppableId && source && source.droppableId){
+            const sourceCol=columns[source.droppableId].name;
+            const targetCol=columns[destination.droppableId].name;
+            if (ticketConfig && ticketConfig.columns && ticketConfig.columns[sourceCol] && ticketConfig.columns[sourceCol].allowedStatus){
+                return ticketConfig.columns[sourceCol].allowedStatus.some(e=>e.indexOf(targetCol)>=0)
+
+            }
+
+        }
+    };
+    const onDragEnd = (result, columns, setColumns) => {
+        if (!result.destination) return;
+        const { source, destination } = result;
+
+        if (source.droppableId !== destination.droppableId) {
+            if (!allowedStatus(source,destination)){
+                message.error("Not Allowed")
+            }else{
+                const sourceColumn = columns[source.droppableId];
+                const destColumn = columns[destination.droppableId];
+                const sourceItems = [...sourceColumn.items];
+                const destItems = [...destColumn.items];
+                const [removed] = sourceItems.splice(source.index, 1);
+                destItems.splice(destination.index, 0, removed);
+                setColumns({
+                    ...columns,
+                    [source.droppableId]: {
+                        ...sourceColumn,
+                        items: sourceItems
+                    },
+                    [destination.droppableId]: {
+                        ...destColumn,
+                        items: destItems
+                    }
+                });
+            }
+
+        } else {
+
+            const column = columns[source.droppableId];
+            const copiedItems = [...column.items];
+            const [removed] = copiedItems.splice(source.index, 1);
+            copiedItems.splice(destination.index, 0, removed);
+            setColumns({
+                ...columns,
+                [source.droppableId]: {
+                    ...column,
+                    items: copiedItems
+                }
+            });
+        }
+    };
+    const onDragUpdate = (result, columns) => {
+
+        const { source, destination } = result;
+
+
+        if (!allowedStatus(source,destination)){
+            setBlocked(true)
+        }else{
+           setBlocked(false)
+        }
+
+
+
+    };
     React.useEffect(()=>{
         const colDef = {}
         ticketConfig && ticketConfig.columns && Object.keys(ticketConfig.columns).forEach(
@@ -213,6 +248,7 @@ function App(props) {
                   <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
                       <DragDropContext
                           onDragEnd={result => onDragEnd(result, columns, setColumns)}
+                          onDragUpdate={result => onDragUpdate(result, columns, setColumns)}
                       >
                           {Object.entries(columns).map(([columnId, column], index) => {
 
@@ -256,12 +292,12 @@ function App(props) {
                                                                     {...provided.droppableProps}
                                                                     ref={provided.innerRef}
                                                                     style={{
-                                                                        background: snapshot.isDraggingOver
+                                                                        background: snapshot.isDraggingOver && !blocked
                                                                             ? "lightblue"
-                                                                            : "lightgrey",
+                                                                            : snapshot.isDraggingOver && blocked ? "#f7a4a4":"lightgrey",
                                                                         padding: 4,
                                                                         width: (window.innerWidth - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length,
-
+                                                                        cursor:blocked ? "not-allowed": "grab",
                                                                         minHeight: window.innerHeight-97
                                                                     }}
                                                                 >
