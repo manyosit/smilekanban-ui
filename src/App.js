@@ -248,6 +248,7 @@ function App(props) {
                   <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
                       <DragDropContext
                           onDragEnd={result => onDragEnd(result, columns, setColumns)}
+                          onBeforeDragStart={result=>setBlocked(false)}
                           onDragUpdate={result => onDragUpdate(result, columns, setColumns)}
                       >
                           {Object.entries(columns).map(([columnId, column], index) => {
