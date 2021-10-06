@@ -272,7 +272,6 @@ function App(props) {
                                         paddingTop:"8px",
                                         paddingBottom: "7px",
                                         margin: "0px -1px 0px 0px",
-
                                         borderRight:"2px solid white",
                                         boxShadow: "0px 1px lightgray"
 
@@ -331,7 +330,7 @@ function App(props) {
                                                                                             style={{
                                                                                                 userSelect: "none",
 
-                                                                                                margin: "0 0 20px 0",
+                                                                                                margin: "0 0 4px 0",
                                                                                                 minHeight: "50px",
                                                                                                 borderColor:"orange",
                                                                                                 border:snapshot.isDragging?"#d9363e 1px solid!important":"none",
@@ -385,7 +384,8 @@ function App(props) {
                                                             background: "lightgrey",
                                                             padding: 4,
                                                             marginTop:1,
-                                                            minHeight: size.height-97
+                                                            minHeight: size.height-97,
+                                                            borderTop:"1px solid rgba(128, 128, 128, 0.05);"
                                                         }}
                                                     >
                                                         {column.name}
