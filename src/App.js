@@ -13,6 +13,7 @@ import {AuthContext} from "./util/Auth/AuthProvider";
 import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
 import {getTickets,setQuery, setTicketConfig} from "./util/redux/asyncActions";
+import {useWindowSize} from "./util/useWindowSize"
 
 const {Content}=Layout
 const {Option}=Select
@@ -66,6 +67,7 @@ function App(props) {
     const [columnWidth,setColumnWidth] = useState({})
     const [blocked,setBlocked] = useState(false)
 
+    const size=useWindowSize();
 
 
     const allowedStatus=(source,destination)=>{
@@ -220,7 +222,7 @@ function App(props) {
             <img src="/logo.png" style={{maxHeight:"50px",left:20,top:0, position:"absolute"}}/>
             <div  style={{  padding: "10px",position:"absolute",right:5,top:0}} >
 
-                <FileSearchOutlined style={{margin:"10px"}} />
+                <FileSearchOutlined style={{margin:"10px",color:"#b9b9b9"}} />
                 <Select defaultValue="HPD:Help Desk" style={{ width: 300}} onChange={(k)=>{
                     console.log(k);
                 }}>
@@ -228,7 +230,7 @@ function App(props) {
 
 
                 </Select>
-                <FilterOutlined style={{margin:"10px"}}/>
+                <FilterOutlined style={{margin:"10px",color:"#b9b9b9"}}/>
                 <Select defaultValue="Assigned to me" style={{ width: 300}} onChange={(k)=>{
                     setRadioVal(k)
                     dispatch(setQuery({selection:k, ticketConfig, history, userManager}))
@@ -264,9 +266,19 @@ function App(props) {
                                         }
                                         setColumnWidth({...columnWidth,[column.name]:displayVal})
                                     }}
-                                    style={{display:"tablecell",float:"none",cursor:"pointer",marginTop:"8px", borderLeft:"2px solid white"}}
+                                    style={{display:"tablecell",
+                                        float:"none",
+                                        cursor:"pointer",
+                                        paddingTop:"8px",
+                                        paddingBottom: "7px",
+                                        margin: "0px -1px 0px 0px",
+
+                                        borderRight:"2px solid white",
+                                        boxShadow: "0px 1px lightgray"
+
+                                    }}
                                     >
-                                        { (columnWidth[column.name] === "block") && column.name}<Tag color="blue" style={{top:"-2px", position:"relative", left:(columnWidth[column.name] === "block")?"12px":"3px"}}>{column.count}</Tag>
+                                        { (columnWidth[column.name] === "block") && column.name}<Tag color={ticketConfig.header.columnCountColor} style={{top:"-2px", position:"relative", left:(columnWidth[column.name] === "block")?"12px":"3px"}}>{column.count}</Tag>
 
                                     </h4>
                                     {
@@ -297,9 +309,9 @@ function App(props) {
                                                                             ? "lightblue"
                                                                             : snapshot.isDraggingOver && blocked ? "#f7a4a4":"lightgrey",
                                                                         padding: 4,
-                                                                        width: (window.innerWidth - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length,
+                                                                        width: (size.width - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length,
                                                                         cursor:blocked ? "not-allowed": "grab",
-                                                                        minHeight: window.innerHeight-97
+                                                                        minHeight: size.height-97
                                                                     }}
                                                                 >
 
@@ -373,7 +385,7 @@ function App(props) {
                                                             background: "lightgrey",
                                                             padding: 4,
                                                             marginTop:1,
-                                                            minHeight: window.innerHeight-97
+                                                            minHeight: size.height-97
                                                         }}
                                                     >
                                                         {column.name}

@@ -20,7 +20,8 @@
       "Medium": "gold",
       "Low": "green",
       "default": "blue"
-    }
+    },
+    "columnCountColor": "orange"
   },
   "cardFields": {
     "Summary": "Description",
