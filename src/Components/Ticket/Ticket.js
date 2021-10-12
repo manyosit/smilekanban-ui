@@ -1,7 +1,7 @@
 import React from "react";
 import {Card, Descriptions, Dropdown, Tag,Menu} from "antd";
 import { DownOutlined } from '@ant-design/icons';
-
+import moment from 'moment';
 
 function getTagColor(ticketConfig, tag) {
     if (ticketConfig && ticketConfig.header && ticketConfig.header.tagColorMapping) {
@@ -19,7 +19,7 @@ const Ticket=(props)=>{
     if (ticketConfig && ticketConfig.columns) {
         listItems = Object.keys(ticketConfig.cardFields).map((cardLabel) => {
             const fieldName = ticketConfig.cardFields[cardLabel]
-            return <Descriptions.Item label={cardLabel} span={3}>{item[fieldName]}</Descriptions.Item>
+            return <Descriptions.Item label={cardLabel} span={3}>{moment(item[fieldName]).isValid()?moment(item[fieldName]).format(ticketConfig.dateFormat) : item[fieldName]}</Descriptions.Item>
         })
     }
 
@@ -30,21 +30,18 @@ const Ticket=(props)=>{
         extra={
             <Dropdown overlay={
                 <Menu>
-                <Menu.Item>
-                    <a href="#" onClick={()=>{menuAction("worklogs",item)}}>
-                        Show Worklogs
-                    </a>
-                </Menu.Item>
-                <Menu.Item >
-                    <a  href="#" onClick={()=>{menuAction("reassign")}}>
-                        Reassign
-                    </a>
-                </Menu.Item>
-                <Menu.Item >
-                    <a   href="#" >
-                        Open in SmartIT
-                    </a>
-                </Menu.Item>
+                    {
+                        ticketConfig && ticketConfig.actions && Object.keys(ticketConfig.actions).map(action=>(
+                            <Menu.Item>
+                                <a href="#" onClick={()=>{menuAction(ticketConfig.actions[action],item)}}>
+                                    {action}
+                                </a>
+                            </Menu.Item>
+                            )
+
+                        )
+                    }
+
 
             </Menu>}>
                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>

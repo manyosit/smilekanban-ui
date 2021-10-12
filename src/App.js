@@ -12,8 +12,10 @@ import {AuthContext} from "./util/Auth/AuthProvider";
 
 import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
-import {getTickets,setQuery, setTicketConfig} from "./util/redux/asyncActions";
+import StatusFields from "./Components/StatusFields/StatusFields";
+import {getTickets,setQuery, setTicketConfig,saveTicket,createWorklog,getTicketWorklogs} from "./util/redux/asyncActions";
 import {useWindowSize} from "./util/useWindowSize"
+import {translateQuery} from "./util/componentUtils"
 
 const {Content}=Layout
 const {Option}=Select
@@ -63,10 +65,15 @@ function App(props) {
     const [columns, setColumns] = useState([]);
     const [showWorkLogs,setShowWorklogs]=useState(false);
     const [workLogInfos,setWorkLogInfos]=useState({});
+    const [statusFields,setStatusFields]=useState([]);
+    const [statusWorklogs,setStatusWorklogs]=useState(false);
+    const [statusFieldsConstants,setStatusFieldsConstants]=useState([]);
     const [radioVal,setRadioVal]=useState("Assigned to me");
     const [columnWidth,setColumnWidth] = useState({})
     const [blocked,setBlocked] = useState(false)
-
+    const [showStatusFields,setShowStatusFields] = useState(false);
+    const [movedItem,setMovedItem] = useState(undefined);
+    const [newStatus,setNewStatus] = useState(undefined);
     const size=useWindowSize();
 
 
@@ -89,13 +96,36 @@ function App(props) {
             if (!allowedStatus(source,destination)){
                 message.error("Not Allowed")
             }else{
+                setMovedItem(columns[source.droppableId].items[source.index])
+                setNewStatus(columns[destination.droppableId].name)
                 const sourceColumn = columns[source.droppableId];
                 const destColumn = columns[destination.droppableId];
                 const sourceItems = [...sourceColumn.items];
                 const destItems = [...destColumn.items];
                 const [removed] = sourceItems.splice(source.index, 1);
+
+                
+                if (destColumn.name && ticketConfig && ticketConfig.columns &&  ticketConfig.columns[destColumn.name] &&  ticketConfig.columns[destColumn.name].fields && Array.isArray(ticketConfig.columns[destColumn.name].fields)  && ticketConfig.columns[destColumn.name].fields.length>0 ){
+                    setShowStatusFields(true);
+                    setStatusFields(ticketConfig.columns[destColumn.name].fields);
+                    if (ticketConfig.columns[destColumn.name].fieldConstants){
+                        setStatusFieldsConstants(ticketConfig.columns[destColumn.name].fieldConstants);
+                    }else{
+                        setStatusFieldsConstants({});
+                    }
+                    if (ticketConfig.columns[destColumn.name].worklogs){
+                       
+                        setStatusWorklogs(ticketConfig.columns[destColumn.name].worklogs)
+                    }else{
+                        setStatusWorklogs(false)
+                    }
+
+                }else{
+                    setStatusFields([]);
+                }
+
                 destItems.splice(destination.index, 0, removed);
-                setColumns({
+                /*setColumns({
                     ...columns,
                     [source.droppableId]: {
                         ...sourceColumn,
@@ -105,7 +135,7 @@ function App(props) {
                         ...destColumn,
                         items: destItems
                     }
-                });
+                });*/
             }
 
         } else {
@@ -148,15 +178,15 @@ function App(props) {
             })
 
         setColumnWidth(colDef)
+        ticketConfig && dispatch(setQuery({selection:"Assigned to me", ticketConfig, history, userManager}))
     },[ticketConfig])
 
     React.useEffect(()=>{
         dispatch(setTicketConfig({id, history, userManager}))
     },[])
 
-    React.useEffect(()=>{
-        dispatch(setQuery({selection:"Assigned to me", ticketConfig, history, userManager}))
-    },[])
+
+
 
 
     const sortTickets=(a,b)=>{
@@ -198,10 +228,25 @@ function App(props) {
 
     const menuAction=(action,item)=>{
 
-        switch(action){
+        switch(action.type){
             case "worklogs":
                 setShowWorklogs(true);
+                dispatch(getTicketWorklogs({item,worklogConfig:ticketConfig.worklogs,history,userManager}))
                 setWorkLogInfos(item);
+
+                break;
+            case "open":
+                let url=translateQuery(action.url,item)
+                window.open(url, '_blank').focus();
+                break;
+            case "fieldUpdate":
+                    setShowStatusFields(true)
+                    setStatusFields(action.fields)
+                    setMovedItem(item)
+                    setNewStatus(undefined)
+                    setStatusFieldsConstants(action.fieldConstants)
+                    setStatusWorklogs(action.worklogs)
+                                
                 break;
             default:
                 message.info("comming soon")
@@ -211,8 +256,17 @@ function App(props) {
 
 
     }
-    const handleClose=()=>{
+    const handleCloseWorkLogs=()=>{
         setShowWorklogs(false);
+    }
+    const handleCloseFields=({item,fields,status,worklogConfig,wlFields})=>{
+
+        dispatch(saveTicket({ item,ticketConfig,fields,status, history,userManager }))
+        if (wlFields && Object.keys(wlFields).length>0 && worklogConfig){
+            dispatch(createWorklog({ item,worklogConfig,wlFields, history,userManager }))
+        }
+       
+        setShowStatusFields(false);
     }
 
   return (
@@ -402,9 +456,21 @@ function App(props) {
 
                 <WorkLogs
                     visible={showWorkLogs}
-                    handleClose={handleClose}
+                    handleClose={handleCloseWorkLogs}
+                    history={history}
+                    userManager={userManager}
                     item={workLogInfos}
                 />
+                  <StatusFields
+                      visible={showStatusFields}
+                      handleClose={handleCloseFields}
+                      fields={statusFields}
+                      item={movedItem}
+                      status={newStatus}
+                      constants={statusFieldsConstants}
+                      worklogs={statusWorklogs}
+                      worklogConfig={ticketConfig && ticketConfig.worklogs}
+                  />
                   </Spin>
               </Content>
           </Layout>

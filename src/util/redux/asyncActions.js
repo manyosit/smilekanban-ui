@@ -14,6 +14,7 @@ export function restApi({ url,requestOptions,history,userManager }){
                 }
             }
 
+
            return fetch(url, requestOptions)
                     .then(async data => {
 
@@ -25,15 +26,13 @@ export function restApi({ url,requestOptions,history,userManager }){
                                 });
                             }else{
 
-                                return data.json()
+                                return(requestOptions.method==="GET")  ?  data.json() : {}
+
+
                             }
 
-                        }).catch(error=>{
+                        })
 
-                   history.replace(history.location.pathname, {
-                       errorStatusCode: '500',
-                       errorDetail: JSON.stringify({url,error:""+ error})
-                   })})
 
                     .then(({ status, ...apiData}) => {
 
@@ -67,6 +66,76 @@ export const setTicketConfig = createAsyncThunk("request/getTicketConfig",  asyn
     const data = await response.json();
     const ticketConfig = data
     return {ticketConfig}
+});
+
+export const saveTicket = createAsyncThunk("request/saveTicket",  async ({ item,fields,ticketConfig,status, history,userManager },thunkAPI) => {
+
+
+    const response = await restApi(
+        {
+            url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${ticketConfig.formName}/${item["Entry ID"]}`,
+            requestOptions:{method:"PUT",headers:{"content-type":"application/json","X-Requested-By":"SMILEkanban"},
+            body:JSON.stringify(
+                {
+                    values:{...fields,"Status":status}
+                }
+            )}
+    ,userManager,history});
+
+    // thunkAPI.getState().request.values is immutable object. next line creates a mutable object.
+    let tickets=JSON.parse(JSON.stringify(thunkAPI.getState().request.tickets));
+
+    tickets = tickets.entries.map(e=>{
+        if (e.values["Entry ID"] ===item["Entry ID"]) {
+            return {...e,values:{...e.values,...fields,"Status":status}}
+        }
+       return e
+
+    } )
+
+
+
+    return tickets
+});
+export const createWorklog = createAsyncThunk("request/createWorklog",  async ({ item,wlFields,worklogConfig, history,userManager },thunkAPI) => {
+
+    const form=worklogConfig.form
+    const ticketid=item[worklogConfig.idField]
+    const constants=worklogConfig.constants
+    const relId=worklogConfig.worklogRelId
+
+
+    const response = await restApi(
+        {
+            url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${form}`,
+            requestOptions:{method:"POST",headers:{"content-type":"application/json","X-Requested-By":"SMILEkanban"},
+                body:JSON.stringify(
+                    {
+                        values:{...wlFields,...constants,[relId]:ticketid}
+                    }
+                )}
+            ,userManager,history});
+
+    let query = encodeURI(`'${relId}'="${ticketid}"`)
+
+    const responseWL = await restApi({url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${form}?q=${query}`,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
+
+    return responseWL;
+    
+});
+export const getTicketWorklogs = createAsyncThunk("request/getTicketWorklogs",  async ({ item, worklogConfig, history,userManager }) => {
+
+
+    
+
+    const form=worklogConfig.form
+    const ticketid=item[worklogConfig.idField]
+    const relId=worklogConfig.worklogRelId
+    let query = encodeURI(`'${relId}'="${ticketid}"`)
+   
+    const response = await restApi({url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${form}?q=${query}`,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
+
+    return response;
 });
 
 

@@ -7,7 +7,7 @@ import {
 
 
 
-import {setQuery, setTicketConfig} from "./asyncActions";
+import {setQuery, setTicketConfig,saveTicket, createWorklog,getTicketWorklogs} from "./asyncActions";
 
 const middleware = [
     ...getDefaultMiddleware(),
@@ -18,25 +18,29 @@ const middleware = [
 
 
 const kanbanState = {
-    loading:false,
+    loading:true,
     error:undefined,
     accessToken:undefined,
-    query:"1=2"
+    query:"1=2",
+    tickets:[],
+    worklogs:[]
 };
 
 
 
 const requestSlice = createSlice({
-    name: "kanban",
+    name: "request",
     initialState: kanbanState,
     reducers: {
 
         resetState:(state)=> {
             return state = {
-                loading:false,
+                loading:true,
                 error:undefined,
                 accessToken:undefined,
-                query:"1=2"
+                query:"1=2",
+                tickets:[],
+                worklogs:[]
             };
 
         },
@@ -66,6 +70,46 @@ const requestSlice = createSlice({
             state.loading = false;
             state.query = action.payload.query;
             state.tickets = action.payload.response;
+        },
+        [saveTicket.pending]: state => {
+            state.loading = true;
+        },
+        [saveTicket.rejected]: (state, action) => {
+            state.loading = false;
+
+            state.error = action.error.message;
+        },
+        [saveTicket.fulfilled]: (state, action) => {
+            state.loading = false;
+
+            state.tickets.entries = action.payload;
+        },
+        [createWorklog.pending]: state => {
+            state.loading = true;
+        },
+        [createWorklog.rejected]: (state, action) => {
+            state.loading = false;
+
+            state.error = action.error.message;
+        },
+        [createWorklog.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.worklogs=action.payload.entries
+
+        },
+        [getTicketWorklogs.pending]: state => {
+            state.loading = true;
+        },
+        [getTicketWorklogs.rejected]: (state, action) => {
+            state.loading = false;
+
+            state.error = action.error.message;
+        },
+        [getTicketWorklogs.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.worklogs=action.payload.entries
+
+
         },
         [setTicketConfig.pending]: state => {
             state.loading = true;
