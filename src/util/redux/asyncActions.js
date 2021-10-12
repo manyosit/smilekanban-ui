@@ -69,13 +69,27 @@ export const setTicketConfig = createAsyncThunk("request/getTicketConfig",  asyn
     const ticketConfig = data
     return {ticketConfig}
 });
+export const getConfigs = createAsyncThunk("request/getConfig",  async ({  history,userManager },thunkAPI) => {
+    const path = `/config/`
+    const response = await fetch(path, {
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        }
+    });
+
+    const data = await response.json();
+    const c=data.filter(d=>d.indexOf(".json")>0).map(d=>d.split(".json")[0])
+    return c
+    
+});
 
 export const saveTicket = createAsyncThunk("request/saveTicket",  async ({ item,fields,ticketConfig,status, history,userManager },thunkAPI) => {
 
 
     const response = await restApi(
         {
-            url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${ticketConfig.formName}/${item["Entry ID"]}`,
+            url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${ticketConfig.formName}/${item[ticketConfig.requestID]}`,
             requestOptions:{method:"PUT",headers:{"content-type":"application/json","X-Requested-By":"SMILEkanban"},
             body:JSON.stringify(
                 {
@@ -88,7 +102,7 @@ export const saveTicket = createAsyncThunk("request/saveTicket",  async ({ item,
     let tickets=JSON.parse(JSON.stringify(thunkAPI.getState().request.tickets));
 
     tickets = tickets.entries.map(e=>{
-        if (e.values["Entry ID"] ===item["Entry ID"]) {
+        if (e.values[ticketConfig.requestID] ===item[ticketConfig.requestID]) {
             return {...e,values:{...e.values,...fields,"Status":status}}
         }
        return e

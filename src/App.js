@@ -13,7 +13,7 @@ import {AuthContext} from "./util/Auth/AuthProvider";
 import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
 import StatusFields from "./Components/StatusFields/StatusFields";
-import {getTickets,setQuery, setTicketConfig,saveTicket,createWorklog,getTicketWorklogs} from "./util/redux/asyncActions";
+import {getTickets,setQuery, setTicketConfig,saveTicket,createWorklog,getTicketWorklogs,getConfigs} from "./util/redux/asyncActions";
 import {useWindowSize} from "./util/useWindowSize"
 import {translateQuery} from "./util/componentUtils"
 
@@ -50,12 +50,13 @@ const select = state => {
     sProps.loading=state.request.loading;
     sProps.query=state.request.query;
     sProps.ticketConfig=state.request.ticketConfig;
+    sProps.configs=state.request.configs
     return sProps
 
 }
 
 function App(props) {
-    const {tickets,loading,query, ticketConfig}=props
+    const {tickets,loading,query, ticketConfig,configs}=props
     let {id} = useParams();
 
 
@@ -178,12 +179,20 @@ function App(props) {
             })
 
         setColumnWidth(colDef)
-        ticketConfig && dispatch(setQuery({selection:"Assigned to me", ticketConfig, history, userManager}))
+        ticketConfig && dispatch(setQuery({selection:radioVal, ticketConfig, history, userManager}))
     },[ticketConfig])
 
     React.useEffect(()=>{
-        dispatch(setTicketConfig({id, history, userManager}))
+        dispatch(getConfigs({ history, userManager}))
     },[])
+
+    React.useEffect(()=>{
+
+
+            dispatch(setTicketConfig({id, history, userManager}))
+
+
+    },[id])
 
 
 
@@ -277,18 +286,23 @@ function App(props) {
             <div  style={{  padding: "10px",position:"absolute",right:5,top:0}} >
 
                 <FileSearchOutlined style={{margin:"10px",color:"#b9b9b9"}} />
-                <Select defaultValue="HPD:Help Desk" style={{ width: 300}} onChange={(k)=>{
-                    console.log(k);
-                }}>
-                    <Option value="HPD:Help Desk">Incident</Option>
+                <Select defaultValue="incident" style={{ width: 300}} options={configs.map(c=>({value:c,label:c.charAt(0).toUpperCase()+c.slice(1)}))} onChange={(k)=>{
+                    history.push(`/kanban/${k}`)
+
+                }} value={id}>
+
 
 
                 </Select>
                 <FilterOutlined style={{margin:"10px",color:"#b9b9b9"}}/>
                 <Select defaultValue="Assigned to me" style={{ width: 300}} onChange={(k)=>{
                     setRadioVal(k)
+
                     dispatch(setQuery({selection:k, ticketConfig, history, userManager}))
-                }}>
+
+                }}
+
+                >
                     <Option value="Assigned to me">Assigned to me</Option>
                     <Option value="Assigned to my groups">Assigned to my groups</Option>
 

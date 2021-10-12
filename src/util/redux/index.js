@@ -7,7 +7,7 @@ import {
 
 
 
-import {setQuery, setTicketConfig,saveTicket, createWorklog,getTicketWorklogs} from "./asyncActions";
+import {setQuery, setTicketConfig,saveTicket, createWorklog,getTicketWorklogs,getConfigs} from "./asyncActions";
 
 const middleware = [
     ...getDefaultMiddleware(),
@@ -23,7 +23,8 @@ const kanbanState = {
     accessToken:undefined,
     query:"1=2",
     tickets:[],
-    worklogs:[]
+    worklogs:[],
+    configs:[]
 };
 
 
@@ -40,7 +41,8 @@ const requestSlice = createSlice({
                 accessToken:undefined,
                 query:"1=2",
                 tickets:[],
-                worklogs:[]
+                worklogs:[],
+                configs:[]
             };
 
         },
@@ -122,6 +124,18 @@ const requestSlice = createSlice({
         [setTicketConfig.fulfilled]: (state, action) => {
             state.loading = false;
             state.ticketConfig = action.payload.ticketConfig;
+        },
+        [getConfigs.pending]: state => {
+            state.loading = true;
+        },
+        [getConfigs.rejected]: (state, action) => {
+            state.loading = false;
+
+            state.error = action.error.message;
+        },
+        [getConfigs.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.configs = action.payload;
         }
 
     }
