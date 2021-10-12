@@ -15,7 +15,9 @@ import { SilentRenew } from "./util/Auth/SilentRenew";
 
 import {AuthProvider} from "./util/Auth/AuthProvider";
 
+
 ReactDOM.render(
+
   <React.StrictMode>
       <Provider store={store}>
           <AuthProvider>

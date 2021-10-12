@@ -1,15 +1,15 @@
 {
-  "requestID": "Entry ID",
-  "formName": "HPD:Help Desk",
-  "idField": "Incident Number",
+  "requestID": "Request ID",
+  "formName": "WOI:WorkOrder",
+  "idField": "Work Order ID",
   "filter": [
     {
       "name": "Assigned to me",
-      "query": "'Assignee Login ID' = \"${userId}\""
+      "query": "'ASLOGID' = \"${userId}\""
     },
     {
       "name": "Assigned to my groups",
-      "query": "'Assigned Group ID' = \"${myGroups}\""
+      "query": "'ASGRPID' = \"${myGroups}\""
     }
   ],
   "keywords": {
@@ -25,7 +25,7 @@
 
   },
   "header": {
-    "titleField": "Incident Number",
+    "titleField": "Work Order ID",
     "tagField": "Priority",
     "tagColorMapping": {
       "Critical": "red",
@@ -38,9 +38,9 @@
   },
   "dateFormat": "DD.MM.yyyy HH:mm",
   "cardFields": {
-    "Summary": "Description",
-    "Assigned Group": "Assigned Group",
-    "Assignee": "Assignee",
+    "Summary": "Summary",
+    "Assigned Group": "ASGRP",
+    "Assignee": "Request Assignee",
     "Created": "Submit Date"
   },
   "columnField": "Status",
@@ -48,7 +48,7 @@
     "Assigned": {
       "fields": [
         {
-          "id": "Assigned Support Company",
+          "id": "ASCPY",
           "name": "Support Company",
           "type": "select",
           "form": "CTM:Support Group",
@@ -58,7 +58,7 @@
           "required":true
         },
         {
-          "id": "Assigned Support Organization",
+          "id": "ASORG",
           "name": "Support Organization",
           "type": "select",
           "form": "CTM:Support Group",
@@ -69,14 +69,14 @@
         },
 
         {
-          "id": "Assigned Group",
+          "id": "ASGRO",
           "name": "Support Group Name",
           "type": "select",
           "form": "CTM:Support Group",
           "labelField": "Support Group Name",
           "valueField": "Support Group ID",
-          "idTarget": "Assigned Group ID",
-          "labelTarget": "Assigned Group",
+          "idTarget": "ASGRPID",
+          "labelTarget": "ASGRP",
           "query": "'Status' = 1 AND 'Vendor Group'=1 AND 'Company' = \"${Assigned Support Company}\" AND 'Support Organization'=\"${Assigned Support Organization}\" ",
           "required":true
         },
@@ -108,66 +108,22 @@
         }
       ],
       "fieldConstants": {"Status_Reason": null},
-      "allowedStatus": ["In Progress","Pending","Cancelled"],
+      "allowedStatus": ["In Progress","Pending","Planning","Cancelled"],
       "worklogs": true
     },
-    "In Progress": {
-      "fields": [
-        {
-          "id": "Assignee",
-          "name": "Assignee",
-          "type": "select",
-          "form": "CTM:Support Group Association",
-          "labelField": "Full Name",
-          "valueField": "Login ID",
-          "idTarget": "Assignee Login ID",
-          "labelTarget": "Assignee",
-          "query": "'Support Group ID' = \"${Assigned Group ID}\""
-        },
+    "Waiting Approval": {
+      "allowedStatus":[]
+    },
+    "Planning": {
+      "allowedStatus": ["In Progress","Cancelled","Assigned"]
 
-        {
-          "id": "Assignee Login ID",
-          "name": "Assignee Login ID",
-          "type": "text",
-          "hidden": true
-        }
-      ,
 
-        {
-          "id": "Assigned Group ID",
-          "name": "Assignee Login ID",
-          "type": "text",
-          "hidden": true
-
-        }
-      ],
-      "fieldConstants": {"Status_Reason": null},
-      "allowedStatus": ["In Progress","Pending","Cancelled","Resolved","Assigned"]
     },
     "Pending": {
-      "allowedStatus": ["In Progress","Cancelled","Assigned"],
+      "allowedStatus": ["In Progress","Cancelled","Assigned","Planning"],
       "fields": [
         {
-          "id": "Status_Reason",
-          "name": "Status Reason",
-          "type": "select",
-          "menuValues": [
-                    {
-                      "label": "Customer Follow-Up Required",
-                      "value": 15000
-                    },{
-                      "label": "Hugo",
-                      "value": 16000
-                    }
-          ],
-          "required":true
-        }
-      ]
-    },
-    "Resolved": {
-      "fields": [
-        {
-          "id": "Status_Reason",
+          "id": "Status Reason",
           "name": "Status Reason",
           "type": "select",
           "menuValues": [
@@ -180,20 +136,49 @@
             }
           ],
           "required":true
-        },
-        {
-          "id": "Resolution",
-          "name": "Resolution",
-          "type": "text",
-          "required":true
         }
+      ]
+    },
+    "In Progress": {
+      "fields": [
+        {
+          "id": "Request Assignee",
+          "name": "Assignee",
+          "type": "select",
+          "form": "CTM:Support Group Association",
+          "labelField": "Full Name",
+          "valueField": "Login ID",
+          "idTarget": "ASLOGID",
+          "labelTarget": "Request Assignee",
+          "query": "'Support Group ID' = \"${ASGRPID}\""
+        },
 
+        {
+          "id": "ASLOGID",
+          "name": "Assignee Login ID",
+          "type": "text",
+          "hidden": true
+        }
+      ,
 
+        {
+          "id": "ASGRPID",
+          "name": "Assignee Login ID",
+          "type": "text",
+          "hidden": true
 
+        }
       ],
+      "fieldConstants": {"Status Reason": null},
+      "allowedStatus": ["In Progress","Pending","Cancelled","Completed","Assigned"]
+    },
+    "Completed": {
       "allowedStatus": ["Assigned","Cancelled"]
     },
     "Cancelled": {
+      "allowedStatus":[]
+    },
+    "Rejected": {
       "allowedStatus":[]
     },
     "Closed": {
@@ -201,9 +186,9 @@
     }
   },
   "worklogs": {
-    "form": "HPD:WorkLog",
-    "idField": "Incident Number",
-    "worklogRelId": "Incident Number",
+    "form": "WOI:WorkInfo",
+    "idField": "Work Order ID",
+    "worklogRelId": "WorkOrder_EntryID",
     "constants": {
       "Secure Work Log": 1,
       "Work Log Type": 8000,
@@ -247,13 +232,13 @@
 
     "Open in SmartIT": {
       "type": "open",
-      "url":"https://smartit-2002.port.manyos.io/smartit/app/#/incident/${InstanceId}"
+      "url":"https://smartit-2002.port.manyos.io/smartit/app/#/workorder/${InstanceId}"
     },
     "Reassign Ticket": {
       "type": "fieldUpdate",
       "fields": [
         {
-          "id": "Assigned Support Company",
+          "id": "ASCPY",
           "name": "Support Company",
           "type": "select",
           "form": "CTM:Support Group",
@@ -263,7 +248,7 @@
           "required":true
         },
         {
-          "id": "Assigned Support Organization",
+          "id": "ASORG",
           "name": "Support Organization",
           "type": "select",
           "form": "CTM:Support Group",
@@ -274,45 +259,45 @@
         },
 
         {
-          "id": "Assigned Group",
+          "id": "ASGRP",
           "name": "Support Group Name",
           "type": "select",
           "form": "CTM:Support Group",
           "labelField": "Support Group Name",
           "valueField": "Support Group ID",
-          "idTarget": "Assigned Group ID",
-          "labelTarget": "Assigned Group",
+          "idTarget": "ASGRPID",
+          "labelTarget": "ASGRP",
           "query": "'Status' = 1 AND 'Vendor Group'=1 AND 'Company' = \"${Assigned Support Company}\" AND 'Support Organization'=\"${Assigned Support Organization}\" ",
           "required":true
         },
         {
-          "id": "Assignee",
+          "id": "Request Assignee",
           "name": "Assignee",
           "type": "select",
           "form": "CTM:Support Group Association",
           "labelField": "Full Name",
           "valueField": "Login ID",
-          "idTarget": "Assignee Login ID",
-          "labelTarget": "Assignee",
+          "idTarget": "ASLOGID",
+          "labelTarget": "Request Assignee",
           "query": "'Support Group ID' = \"${Assigned Group ID}\""
         },
 
         {
-          "id": "Assignee Login ID",
+          "id": "ASLOGID",
           "name": "Assignee Login ID",
           "type": "text",
           "hidden": true
 
         },
         {
-          "id": "Assigned Group ID",
+          "id": "ASGRPID",
           "name": "Assigned Group ID",
           "type": "text",
           "hidden": true
 
         }
       ],
-      "fieldConstants": {"Status_Reason": null,"Status": "Assigned"},
+      "fieldConstants": {"Status Reason": null,"Status": "Assigned"},
       "worklogs": true
     }
   }
