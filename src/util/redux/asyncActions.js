@@ -2,6 +2,8 @@ import {
     createAsyncThunk
 } from "@reduxjs/toolkit";
 
+import {translateQuery} from '../componentUtils'
+
 
 export function restApi({ url,requestOptions,history,userManager }){
 
@@ -121,7 +123,7 @@ export const createWorklog = createAsyncThunk("request/createWorklog",  async ({
     const responseWL = await restApi({url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${form}?q=${query}`,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
 
     return responseWL;
-    
+
 });
 export const getTicketWorklogs = createAsyncThunk("request/getTicketWorklogs",  async ({ item, worklogConfig, history,userManager }) => {
 
@@ -142,31 +144,47 @@ export const getTicketWorklogs = createAsyncThunk("request/getTicketWorklogs",  
 export const setQuery = createAsyncThunk("request/getTickets",  async ({ selection, ticketConfig, history,userManager }) => {
 
     const user = await userManager.getUser()
+    let values={
+        "user.profile.name":user.profile.name
+    }
 
     let query
-    switch (selection){
-        case "Assigned to me":
-            query= "%27Assignee Login ID%27%20%3D%20%22"+user.profile.name+"%22"
-            break;
-        case "Assigned to my groups":
-            const myGroups = await restApi({url:window._env_.REACT_APP_API_URL+"/api/arsys/v1/entry/CTM:Support Group Association?q=%27Login ID%27%20%3D%20%22"+user.profile.name+"%22",requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
 
-            if (myGroups && myGroups.entries && Array.isArray(myGroups.entries)){
+    let words = ticketConfig.keywords && await Promise.all(Object.keys(ticketConfig.keywords).map(async keyword=>{
+        const conf = ticketConfig.keywords[keyword]
 
-                myGroups.entries.forEach((e,i)=>{
+        if (conf.form && conf.formQuery ){
+            const translatedQuery=encodeURI(translateQuery(conf.formQuery,values))
+            const keywordResponse=await restApi({url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${conf.form}?q=${translatedQuery}`,requestOptions:{method:"GET","content-type":"application/json"},userManager,history})
+                if (keywordResponse && keywordResponse.entries && Array.isArray(keywordResponse.entries)){
 
-                    if (i===0){
-                        query ="%27Assigned Group ID%27%20%3D%20%22"+(e.values["Support Group ID"])+"%22"
-                    }else{
-                        query = query + " OR %27Assigned Group ID%27%20%3D%20%22"+(e.values["Support Group ID"])+"%22"
-                    }
-                })
+                    return {[keyword]:{values:keywordResponse.entries.map(e=>e.values[conf.formField]),joinOperator:conf.joinOperator}}
+                }
+
+
+
+        }else{
+           return {
+                [keyword]:translateQuery(conf.query,values)
             }
-            break;
-        default:
-            query = "1=2";
-            break;
-    }
+
+        }
+
+
+
+    }))
+
+   words.forEach(w=>{
+
+       values={...values,...w}
+   })
+    const filterConf=ticketConfig.filter && ticketConfig.filter.find(e=>e.name===selection)
+
+
+    query = translateQuery(filterConf.query,values)
+
+
+
     const response = await restApi({url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${ticketConfig.formName}?q=${query}`,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
 
     return {query,response};

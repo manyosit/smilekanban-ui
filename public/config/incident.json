@@ -4,13 +4,25 @@
   "filter": [
     {
       "name": "Assigned to me",
-      "query": "query1"
+      "query": "'Assignee Login ID' = \"${userId}\""
     },
     {
       "name": "Assigned to my groups",
-      "query": "query2"
+      "query": "'Assigned Group ID' = \"${myGroups}\""
     }
   ],
+  "keywords": {
+    "userId": {
+      "query": "${user.profile.name}"
+    },
+    "myGroups": {
+      "form":"CTM:Support Group Association",
+      "joinOperator": "OR",
+      "formQuery": "'Login ID' =\"${user.profile.name}\"",
+      "formField": "Support Group ID"
+    }
+
+  },
   "header": {
     "titleField": "Incident Number",
     "tagField": "Priority",
