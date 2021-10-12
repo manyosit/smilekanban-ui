@@ -1,6 +1,6 @@
 {
   "name": "@manyos/smilekanban",
-  "version": "0.7.2",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.1",
