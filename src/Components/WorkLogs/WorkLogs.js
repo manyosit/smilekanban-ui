@@ -9,7 +9,7 @@ import AddWorklog from "./AddWorklog"
 
 const select = state => {
     let sProps={}
-    sProps.loading=state.request.loading;
+    sProps.loading=state.request.wlLoading;
     sProps.ticketConfig=state.request.ticketConfig;
     sProps.worklogs=state.request.worklogs;
     return sProps

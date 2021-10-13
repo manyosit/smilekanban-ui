@@ -87,15 +87,15 @@ const requestSlice = createSlice({
             state.tickets.entries = action.payload;
         },
         [createWorklog.pending]: state => {
-            state.loading = true;
+            state.wlLoading = true;
         },
         [createWorklog.rejected]: (state, action) => {
-            state.loading = false;
+            state.wlLoading = false;
 
             state.error = action.error.message;
         },
         [createWorklog.fulfilled]: (state, action) => {
-            state.loading = false;
+            state.wlLoading = false;
             state.worklogs=action.payload.entries
 
         },

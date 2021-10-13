@@ -129,13 +129,20 @@ export const saveTicket = createAsyncThunk("request/saveTicket",  async ({ item,
                 }
             )}
     ,userManager,history});
+    const ticket = await restApi(
+        {
+            url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${ticketConfig.formName}/${item[ticketConfig.requestID]}`,
+            requestOptions:{method:"GET",headers:{"content-type":"application/json","X-Requested-By":"SMILEkanban"}}
+
+            ,userManager,history});
+
 
     // thunkAPI.getState().request.values is immutable object. next line creates a mutable object.
     let tickets=JSON.parse(JSON.stringify(thunkAPI.getState().request.tickets));
 
     tickets = tickets.entries.map(e=>{
         if (e.values[ticketConfig.requestID] ===item[ticketConfig.requestID]) {
-            return {...e,values:{...e.values,...fields,"Status":status}}
+            return {...e,values:ticket.values}
         }
        return e
 
