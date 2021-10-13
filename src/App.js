@@ -368,6 +368,8 @@ function App(props) {
                                                 <div style={{ margin: 1,borderTop:"1px solid #80808073" }}>
                                                     <Droppable droppableId={columnId} key={columnId}>
                                                         {(provided, snapshot) => {
+                                                            const calcSize = (size.width - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length
+                                                            const blockSize = (calcSize<250)?250:calcSize
                                                             return (
 
 
@@ -379,7 +381,7 @@ function App(props) {
                                                                             ? "lightblue"
                                                                             : snapshot.isDraggingOver && blocked ? "#f7a4a4":"lightgrey",
                                                                         padding: 4,
-                                                                        width: (size.width - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length,
+                                                                        width: calcSize,
                                                                         cursor:blocked ? "not-allowed": "grab",
                                                                         minHeight: size.height-97
                                                                     }}

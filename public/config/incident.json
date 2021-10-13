@@ -200,56 +200,9 @@
       "allowedStatus":[]
     }
   },
-  "worklogs": {
-    "form": "HPD:WorkLog",
-    "idField": "Incident Number",
-    "worklogRelId": "Incident Number",
-    "constants": {
-      "Secure Work Log": 1,
-      "Work Log Type": 8000,
-      "Description": "Kanban Worklog. Status Change: Assigned",
-      "Short Description": "Kanban Worklog"
-
-    },
-    "fields": [
-
-      {
-        "id": "Detailed Description",
-        "name": "Notes",
-        "type": "textArea",
-        "rows": 7
-
-      },
-
-      {
-        "id": "View Access",
-        "name": "View Access",
-        "type": "radio",
-        "required": true,
-        "options": [
-          {
-            "label": "Internal",
-            "value": 0
-          },{
-            "label": "Public",
-            "value": 1
-          }
-        ],
-        "optionType":"button"
-      }
-    ],
-    "displayFields": {"text": "Detailed Description","date": "Work Log Submit Date","submitter": "Work Log Submitter"}
-  },
-  "actions": {
-    "Show Worklogs": {
-      "type": "worklogs"
-    },
-
-    "Open in SmartIT": {
-      "type": "open",
-      "url":"https://smartit-2002.port.manyos.io/smartit/app/#/incident/${InstanceId}"
-    },
-    "Reassign Ticket": {
+  "Assignee": {
+    "field": "Assignee",
+    "action": {
       "type": "fieldUpdate",
       "fields": [
         {
@@ -312,8 +265,57 @@
 
         }
       ],
-      "fieldConstants": {"Status_Reason": null,"Status": "Assigned"},
+      "fieldConstants": {"Status": "Assigned"},
       "worklogs": true
     }
+  },
+  "worklogs": {
+    "form": "HPD:WorkLog",
+    "idField": "Incident Number",
+    "worklogRelId": "Incident Number",
+    "constants": {
+      "Secure Work Log": 1,
+      "Work Log Type": 8000,
+      "Description": "Kanban Worklog. Status Change: Assigned",
+      "Short Description": "Kanban Worklog"
+
+    },
+    "fields": [
+
+      {
+        "id": "Detailed Description",
+        "name": "Notes",
+        "type": "textArea",
+        "rows": 7
+
+      },
+
+      {
+        "id": "View Access",
+        "name": "View Access",
+        "type": "radio",
+        "required": true,
+        "options": [
+          {
+            "label": "Internal",
+            "value": 0
+          },{
+            "label": "Public",
+            "value": 1
+          }
+        ],
+        "optionType":"button"
+      }
+    ],
+    "displayFields": {"text": "Detailed Description","date": "Work Log Submit Date","submitter": "Work Log Submitter"}
+  },
+  "actions": {
+
+
+    "Open in SmartIT": {
+      "type": "open",
+      "url":"https://smartit-2002.port.manyos.io/smartit/app/#/incident/${InstanceId}"
+    }
+
   }
 }
