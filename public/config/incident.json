@@ -143,7 +143,6 @@
 
         }
       ],
-      "fieldConstants": {"Status_Reason": null},
       "allowedStatus": ["In Progress","Pending","Cancelled","Resolved","Assigned"]
     },
     "Pending": {
@@ -158,13 +157,18 @@
                       "label": "Customer Follow-Up Required",
                       "value": 15000
                     },{
-                      "label": "Hugo",
-                      "value": 16000
+                      "label": "Client Hold",
+                      "value": 13000
+                    },
+                    {
+                      "label": "Monitoring Incident",
+                      "value": 14000
                     }
           ],
           "required":true
         }
-      ]
+      ],
+      "fieldConstants": {"Status_Reason": null}
     },
     "Resolved": {
       "fields": [
@@ -174,11 +178,14 @@
           "type": "select",
           "menuValues": [
             {
-              "label": "Customer Follow-Up Required",
-              "value": 15000
-            },{
-              "label": "Hugo",
+              "label": "Temporary Corrective Action",
               "value": 16000
+            },{
+              "label": "No Further Action Required",
+              "value": 17000
+            },{
+              "label": "A miracle has happened",
+              "value": 1900
             }
           ],
           "required":true
@@ -317,6 +324,39 @@
     "Open in SmartIT": {
       "type": "open",
       "url":"https://smartit-2002.port.manyos.io/smartit/app/#/incident/${InstanceId}"
+    },
+    "meine tolle Aktion": {
+      "type": "fieldUpdate",
+      "fields": [
+
+        {
+          "id": "Assignee",
+          "name": "Assignee",
+          "type": "select",
+          "form": "CTM:Support Group Association",
+          "labelField": "Full Name",
+          "valueField": "Login ID",
+          "idTarget": "Assignee Login ID",
+          "labelTarget": "Assignee",
+          "query": "'Support Group ID' = \"${Assigned Group ID}\""
+        },
+
+        {
+          "id": "Assignee Login ID",
+          "name": "Assignee Login ID",
+          "type": "text",
+          "hidden": true
+
+        },
+        {
+          "id": "Assigned Group ID",
+          "name": "Assigned Group ID",
+          "type": "text",
+          "hidden": true
+
+        }
+      ],
+      "fieldConstants": {"Status": "Assigned"}
     }
 
   }
