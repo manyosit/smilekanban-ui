@@ -123,6 +123,8 @@ function App(props) {
 
                 }else{
                     setStatusFields([]);
+
+                    dispatch(saveTicket({ item:columns[source.droppableId].items[source.index],ticketConfig,fields:[],status:columns[destination.droppableId].name, history,userManager }))
                 }
 
                 destItems.splice(destination.index, 0, removed);
@@ -179,6 +181,7 @@ function App(props) {
             })
 
         setColumnWidth(colDef)
+
         ticketConfig && dispatch(setQuery({selection:radioVal, ticketConfig, history, userManager}))
     },[ticketConfig])
 
