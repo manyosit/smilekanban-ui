@@ -4,7 +4,6 @@
 /node_modules
 /.pnp
 .pnp.js
-
 # testing
 /coverage
 
@@ -20,6 +19,19 @@ env-config.js
 .env.test.local
 .env.production.local
 
+# idea
+.idea
+
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+artifacts
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
