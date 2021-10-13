@@ -24,6 +24,19 @@ const WorkLogs=(props)=>{
     const ticketId=item && ticketConfig && item[ticketConfig.idField]
     const dispatch=useDispatch();
 
+
+
+    const sortWorkLogs=(a,b)=>{
+
+        const sortBy = ticketConfig.worklogs.displayFields.date
+
+        const aDate=new Date(a[sortBy])
+        const bDate=new Date(b[sortBy])
+
+        return  bDate-aDate
+
+    }
+
     React.useEffect(() => {
 
 
@@ -41,11 +54,12 @@ const WorkLogs=(props)=>{
 
         if (worklogs ){
 
-            setData(worklogs.map(e=>({
-                    submitter:e.values[ticketConfig.worklogs.displayFields.submitter],
-                    text:(<p>{e.values[ticketConfig.worklogs.displayFields.text]}</p>),
+            const sorted=worklogs.map(e=>e.values).sort(sortWorkLogs)
+            setData(sorted.map(e=>({
+                    submitter:e[ticketConfig.worklogs.displayFields.submitter],
+                    text:(<p>{e[ticketConfig.worklogs.displayFields.text]}</p>),
                     date:(
-                            <span>{moment(e.values[ticketConfig.worklogs.displayFields.date]).format(ticketConfig.dateFormat)}</span>
+                            <span>{moment(e[ticketConfig.worklogs.displayFields.date]).format(ticketConfig.dateFormat)}</span>
                    ),
                 })
             ))
