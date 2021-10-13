@@ -123,8 +123,9 @@ function App(props) {
 
                 }else{
                     setStatusFields([]);
-
-                    dispatch(saveTicket({ item:columns[source.droppableId].items[source.index],ticketConfig,fields:[],status:columns[destination.droppableId].name, history,userManager }))
+                    const fieldConstants=ticketConfig.columns[destColumn.name].fieldConstants
+                   
+                    dispatch(saveTicket({ item:columns[source.droppableId].items[source.index],ticketConfig,fields:{...fieldConstants},status:columns[destination.droppableId].name, history,userManager }))
                 }
 
                 destItems.splice(destination.index, 0, removed);
@@ -270,6 +271,7 @@ function App(props) {
         setShowWorklogs(false);
     }
     const handleCloseFields=({item,fields,status,worklogConfig,wlFields})=>{
+
 
         dispatch(saveTicket({ item,ticketConfig,fields,status, history,userManager }))
         if (wlFields && Object.keys(wlFields).length>0 && worklogConfig){
