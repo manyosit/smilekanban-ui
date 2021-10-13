@@ -61,6 +61,7 @@ const ErrorHandler = ({ children }) => {
                                 <Alert
                                     className="sc-error-alert"
                                     message="Error Details"
+                                    style={{marginLeft:"auto",marginRight:"auto"}}
                                     showIcon
                                     description={
                                         Object.keys(errDetails).map(e => {

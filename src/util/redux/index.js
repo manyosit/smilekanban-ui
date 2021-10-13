@@ -123,7 +123,8 @@ const requestSlice = createSlice({
         },
         [setTicketConfig.fulfilled]: (state, action) => {
             state.loading = false;
-            state.ticketConfig = action.payload.ticketConfig;
+
+            state.ticketConfig = action.payload && action.payload.ticketConfig;
         },
         [getConfigs.pending]: state => {
             state.loading = true;

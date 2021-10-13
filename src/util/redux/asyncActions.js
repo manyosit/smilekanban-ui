@@ -64,10 +64,25 @@ export const setTicketConfig = createAsyncThunk("request/getTicketConfig",  asyn
             "Content-Type": "application/json",
             Accept: "application/json"
         }
+    }).catch(error=>{
+
+        history.replace(history.location.pathname, {
+            errorStatusCode: 500,
+            errorDetail: JSON.stringify({path,error:""+error})
+        });
+    }).then(response=>response.json()).catch(error=>{
+
+        history.replace(history.location.pathname, {
+            errorStatusCode: 500,
+            errorDetail: JSON.stringify({path,error:""+error})
+        });
+    }).then(data=>{
+        const ticketConfig = data
+        return {ticketConfig}
     });
-    const data = await response.json();
-    const ticketConfig = data
-    return {ticketConfig}
+
+    return response
+
 });
 export const getConfigs = createAsyncThunk("request/getConfig",  async ({  history,userManager },thunkAPI) => {
     const path = `/config/`
@@ -76,11 +91,28 @@ export const getConfigs = createAsyncThunk("request/getConfig",  async ({  histo
             "Content-Type": "application/json",
             Accept: "application/json"
         }
+    }).catch(error=>{
+
+        history.replace(history.location.pathname, {
+            errorStatusCode: 500,
+            errorDetail: JSON.stringify({path,error})
+        });
+    }).then(response=>response.json()).catch(error=>{
+
+        history.replace(history.location.pathname, {
+            errorStatusCode: 500,
+            errorDetail: JSON.stringify({path,error})
+        });
+    }).then(data=>{
+        return data.filter(d=>d.indexOf(".json")>0).map(d=>d.split(".json")[0])
     });
 
-    const data = await response.json();
-    const c=data.filter(d=>d.indexOf(".json")>0).map(d=>d.split(".json")[0])
-    return c
+
+
+    return response
+
+
+
     
 });
 

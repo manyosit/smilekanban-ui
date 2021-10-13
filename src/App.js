@@ -348,7 +348,7 @@ function App(props) {
 
                                     }}
                                     >
-                                        { (columnWidth[column.name] === "block") && column.name}<Tag color={ticketConfig.header.columnCountColor} style={{top:"-2px", position:"relative", left:(columnWidth[column.name] === "block")?"12px":"3px"}}>{column.count}</Tag>
+                                        { (columnWidth[column.name] === "block") && column.name}<Tag color={ticketConfig && ticketConfig.header.columnCountColor} style={{top:"-2px", position:"relative", left:(columnWidth[column.name] === "block")?"12px":"3px"}}>{column.count}</Tag>
 
                                     </h4>
                                     {
