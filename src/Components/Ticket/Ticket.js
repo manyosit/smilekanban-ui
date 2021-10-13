@@ -32,7 +32,7 @@ const Ticket=(props)=>{
         headStyle={{fontSize:"14px"}}
 
         size={"small"}
-        onClick={()=>{setExpand(!expand)}}
+
         actions={[
             (ticketConfig.Assignee) && <Tooltip title={item[ticketConfig.Assignee.field]}><Avatar size={20} key="user" onClick={()=>{menuAction(ticketConfig.Assignee.action,item)}}>{
                 item[ticketConfig.Assignee.field] && item[ticketConfig.Assignee.field].split(" ").map(e=>e.charAt(0).toUpperCase()).join("")
@@ -64,7 +64,7 @@ const Ticket=(props)=>{
         }
         bodyStyle={{padding:0}}
     >
-        <div className={"ticketCard-"+(expand?"open":"closed")}>
+        <div className={"ticketCard-"+(expand?"open":"closed")}  onClick={()=>{setExpand(!expand)}}>
         {
             expand
             ? <Descriptions  bordered size={"small"} contentStyle={{fontSize:"10px"}} labelStyle={{fontSize:"10px"}}>
