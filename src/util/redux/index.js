@@ -100,15 +100,15 @@ const requestSlice = createSlice({
 
         },
         [getTicketWorklogs.pending]: state => {
-            state.loading = true;
+            state.wlLoading = true;
         },
         [getTicketWorklogs.rejected]: (state, action) => {
-            state.loading = false;
+            state.wlLoading = false;
 
             state.error = action.error.message;
         },
         [getTicketWorklogs.fulfilled]: (state, action) => {
-            state.loading = false;
+            state.wlLoading = false;
             state.worklogs=action.payload.entries
 
 
