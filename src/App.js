@@ -202,16 +202,14 @@ function App(props) {
 
 
     const sortTickets=(a,b)=>{
-        if ((a.priority)===b.priority) {
-            return b.submitDate - a.submitDate
-        }else{
-            return  intPrio(a.priority)-intPrio(b.priority)
-        }
+            const sortBy = ticketConfig.priorityField
+            return  intPrio(a[sortBy])-intPrio(b[sortBy])
+
     }
 
     function filterTickets(tickets, status) {
         if (tickets && tickets.entries && Array.isArray(tickets.entries)) {
-            return tickets.entries.filter(e=>e.values.Status===status).map(e=>e.values).sort(sortTickets)
+            return tickets.entries.filter(e=>e.values[ticketConfig.columnField]===status).map(e=>e.values).sort(sortTickets)
         } else {
             return []
         }
@@ -369,7 +367,7 @@ function App(props) {
                                                     <Droppable droppableId={columnId} key={columnId}>
                                                         {(provided, snapshot) => {
                                                             const calcSize = (size.width - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length
-                                                            const blockSize = (calcSize<250)?250:calcSize
+
                                                             return (
 
 

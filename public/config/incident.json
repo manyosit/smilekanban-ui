@@ -2,6 +2,8 @@
   "requestID": "Entry ID",
   "formName": "HPD:Help Desk",
   "idField": "Incident Number",
+  "priorityField": "Priority",
+
   "filter": [
     {
       "name": "Assigned to me",
