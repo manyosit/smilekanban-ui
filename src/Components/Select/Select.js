@@ -6,7 +6,7 @@ const {Option}=Select
 
 const SelectField = ( props)=>{
 
-    const {menuValues,id,onChange,idTarget,labelTarget,form,query,allFormValues,labelField,valueField,value}=props
+    const {menuValues,id,onChange,valueTarget,labelTarget,form,query,allFormValues,labelField,valueField,value}=props
 
 
 
@@ -48,9 +48,9 @@ const SelectField = ( props)=>{
 
 
             setdynOptions(options)
-            if (idTarget){
-                if (options.map(e=>e.value).indexOf(allFormValues[idTarget])<0){
-                    onChange(idTarget,null)
+            if (valueTarget){
+                if (options.map(e=>e.value).indexOf(allFormValues[valueTarget])<0){
+                    onChange(valueTarget,null)
                     labelTarget && onChange(labelTarget,null)
 
                 }
@@ -79,10 +79,10 @@ const SelectField = ( props)=>{
             filterOption={(input,option)=>(option.label.toLowerCase().indexOf(input.toLowerCase())>=0)}
             onChange={(val,e)=>{
                
-                if (idTarget || labelTarget){
-                    if (idTarget){
+                if (valueTarget || labelTarget){
+                    if (valueTarget){
 
-                        onChange(idTarget,e.value)
+                        onChange(valueTarget,e.value)
                     }
                     if (labelTarget){
                         onChange(labelTarget,e.label)

@@ -75,7 +75,7 @@
           "form": "CTM:Support Group",
           "labelField": "Support Group Name",
           "valueField": "Support Group ID",
-          "idTarget": "ASGRPID",
+          "valueTarget": "ASGRPID",
           "labelTarget": "ASGRP",
           "query": "'Status' = 1 AND 'Vendor Group'=1 AND 'Company' = \"${Assigned Support Company}\" AND 'Support Organization'=\"${Assigned Support Organization}\" ",
           "required":true
@@ -87,7 +87,7 @@
           "form": "CTM:Support Group Association",
           "labelField": "Full Name",
           "valueField": "Login ID",
-          "idTarget": "Assignee Login ID",
+          "valueTarget": "Assignee Login ID",
           "labelTarget": "Assignee",
           "query": "'Support Group ID' = \"${Assigned Group ID}\""
         },
@@ -148,7 +148,7 @@
           "form": "CTM:Support Group Association",
           "labelField": "Full Name",
           "valueField": "Login ID",
-          "idTarget": "ASLOGID",
+          "valueTarget": "ASLOGID",
           "labelTarget": "Request Assignee",
           "query": "'Support Group ID' = \"${ASGRPID}\""
         },
@@ -218,7 +218,7 @@
           "form": "CTM:Support Group",
           "labelField": "Support Group Name",
           "valueField": "Support Group ID",
-          "idTarget": "ASGRPID",
+          "valueTarget": "ASGRPID",
           "labelTarget": "ASGRP",
           "query": "'Status' = 1 AND 'Vendor Group'=1 AND 'Company' = \"${Assigned Support Company}\" AND 'Support Organization'=\"${Assigned Support Organization}\" ",
           "required":true
@@ -230,7 +230,7 @@
           "form": "CTM:Support Group Association",
           "labelField": "Full Name",
           "valueField": "Login ID",
-          "idTarget": "ASLOGID",
+          "valueTarget": "ASLOGID",
           "labelTarget": "Request Assignee",
           "query": "'Support Group ID' = \"${Assigned Group ID}\""
         },
