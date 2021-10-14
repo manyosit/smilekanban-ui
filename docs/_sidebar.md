@@ -1,8 +1,5 @@
 - Getting started
 
-  - [Quick start](quickstart)
+  - [Deployment](quickstart)
+  - [Configuration](configuration)
   - [Release notes](releases)
-
-- Configuration
-
-  - [Form Definition](configuration/forms)
