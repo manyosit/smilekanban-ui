@@ -6,7 +6,7 @@
 
 #### **`config/incident.json`**
 
-``` json
+``` js
 {
   "formName": "HPD:Help Desk",
   "requestID": "Entry ID",
