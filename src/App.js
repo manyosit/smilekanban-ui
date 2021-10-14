@@ -124,7 +124,7 @@ function App(props) {
                 }else{
                     setStatusFields([]);
                     const fieldConstants=ticketConfig.columns[destColumn.name].fieldConstants
-                   
+
                     dispatch(saveTicket({ item:columns[source.droppableId].items[source.index],ticketConfig,fields:{...fieldConstants},status:columns[destination.droppableId].name, history,userManager }))
                 }
 
@@ -289,7 +289,7 @@ function App(props) {
             <div  style={{  padding: "10px",position:"absolute",right:5,top:0}} >
 
                 <FileSearchOutlined style={{margin:"10px",color:"#b9b9b9"}} />
-                <Select defaultValue="incident" style={{ width: 300}} options={configs.map(c=>({value:c,label:c.charAt(0).toUpperCase()+c.slice(1)}))} onChange={(k)=>{
+                <Select defaultValue="incident" style={{ width: 300}} options={configs} onChange={(k)=>{
                     history.push(`/kanban/${k}`)
 
                 }} value={id}>

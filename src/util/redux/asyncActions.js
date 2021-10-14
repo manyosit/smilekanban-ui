@@ -85,7 +85,7 @@ export const setTicketConfig = createAsyncThunk("request/getTicketConfig",  asyn
 
 });
 export const getConfigs = createAsyncThunk("request/getConfig",  async ({  history,userManager },thunkAPI) => {
-    const path = `/config/`
+    const path = `/config/meta.json`
     const response = await fetch(path, {
         headers: {
             "Content-Type": "application/json",
@@ -104,10 +104,20 @@ export const getConfigs = createAsyncThunk("request/getConfig",  async ({  histo
             errorDetail: JSON.stringify({path,error})
         });
     }).then(data=>{
-        return data.filter(d=>d.indexOf(".json")>0).map(d=>d.split(".json")[0])
-    });
+
+        
+        return Object.keys(data[0]).map(c=>({label:c,value:data[0][c].file}))
 
 
+    }).catch(error=> {
+
+        history.replace(history.location.pathname, {
+            errorStatusCode: 500,
+            errorDetail: JSON.stringify({path, error})
+        });
+        ;
+
+    })
 
     return response
 
