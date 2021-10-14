@@ -167,8 +167,7 @@
           ],
           "required":true
         }
-      ],
-      "fieldConstants": {"Status_Reason": null}
+      ]
     },
     "Resolved": {
       "fields": [
