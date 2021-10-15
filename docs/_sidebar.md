@@ -1,5 +1,5 @@
 - Getting started
-
+  - [Getting started](usage)
   - [Deployment](deployment)
   - [Configuration](configuration)
   - [Release notes](releases)
