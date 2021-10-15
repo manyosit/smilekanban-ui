@@ -1,5 +1,5 @@
 - Getting started
 
-  - [Deployment](quickstart)
+  - [Deployment](deployment)
   - [Configuration](configuration)
   - [Release notes](releases)
