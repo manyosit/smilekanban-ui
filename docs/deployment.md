@@ -4,9 +4,8 @@ SMILEkanban is best deployed as docker container. Our ready to use image can be 
 
 # Environment preparation
 
-To avoid [CORS](https://developer.mozilla.org/de/docs/Web/HTTP/CORS) errors you need to allow your local SMILEkanban FQDN in Remedy SSO & Remedy REST API.
-
 ## CORS: Remedy SSO (RSSO) & Remedy Rest API
+To avoid [CORS](https://developer.mozilla.org/de/docs/Web/HTTP/CORS) errors you need to allow your local SMILEkanban FQDN in Remedy SSO & Remedy REST API.
 
 ```
 ALLOW-FROM https://smilekanban.yourdomain.com
