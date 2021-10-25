@@ -4,7 +4,7 @@ Optimize your ITSM flow: work transparent, fast & easy!
 
 Why should you use a kanban board for working with tickets? Most classic ticket tools, like BMC Smart-IT, are using tables for visualizing the tickets in your system. As you can see in the picture below, there's a lack of progress visualization for your tickets.
 
-![BMC Smart IT - Console](_media/kanban-overview.png)
+![BMC Smart IT - Console](_media/smartit-console.png)
 
 Further more you can't directly move them to another state, change required fields, and add worklogs, without opening them.
 
