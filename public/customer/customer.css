@@ -23,10 +23,7 @@
 
 
 
-/*.headMenu{
-    background-color: white!important;
 
-}*/
 
 .ant-card-actions > li{
     margin: 3px 0;
@@ -35,11 +32,255 @@
     padding: 2px 6px;
 }
 
-.ticketCard-open:hover{
-    background-color: #ededed;
-    cursor: zoom-out;
+.ticketCard-open{
+
+    width:400px;
 }
-.ticketCard-closed:hover{
-    background-color: #ededed;
-    cursor: zoom-in;
+.ticketCard-closed{
+
+    width:300px
+}
+
+.stateCol{
+    background-color: white;
+    box-shadow: 1px 0px 5px #0000002e;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    padding-bottom: 5px;
+    padding-top:8px;
+    display: block;
+    float: left;
+
+
+
+}
+
+
+.columnHeaderPriority{
+    top:-2px;
+    position:relative;
+    left:12px;
+}
+
+.droppableCard{
+    padding: 4px;
+    min-width:300px;
+    min-height: 100px;
+    overflow-x: scroll;
+}
+
+.droppableCard:not(.droppableCardDraggingOver):not(.droppableCardBlocked){
+    background: white;
+}
+
+.droppableCard.droppableCardDraggingOver:not(.droppableCardBlocked){
+    cursor:grab;
+    background: lightblue;
+}
+.droppableCard.droppableCardDraggingOver.droppableCardBlocked{
+    background: #f7a4a4;
+    cursor:not-allowed;
+}
+
+.draggableCard{
+    user-select: none;
+    margin: 0 0 4px 0;
+    min-height: 50px;
+    border-color:orange;
+    color:white;
+}
+
+.draggableCard.draggableCardDragging{
+    border: none;
+    background-color: white;
+}
+
+.draggableCard:not(.draggableCardDragging){
+    border: none;
+    background-color: white;
+}
+
+.droppableCard.droppableCardDraggingOver.droppableCardBlocked{
+    background: #f7a4a4;
+    cursor:not-allowed;
+}
+
+
+.menuHiddenCols{
+
+    margin-right:15px;
+    margin-left:auto;
+    float:right;
+    margin-top: 3px;
+}
+.menuBoardAction{
+
+    margin-left:auto;
+
+    height: 35px;
+    width: 100%;
+}
+
+.menuBoardAction .ant-input-affix-wrapper{
+    width:250px;
+    float:right;
+    border-style: none none solid none;
+    margin-right: 15px;
+}
+
+
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover{
+
+    border-color: #ff8c40;
+
+}
+.ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused{
+
+    border-color: #ff8c40;
+    box-shadow: 0 0 0 2px rgb(255 213 145 / 34%);
+
+}
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+    border-color: #ff8c40;
+    border-right-width: 1px !important;
+}
+.ant-select-focused:not(.ant-select-disabled).ant-select .ant-select-selector {
+    border-color: #ff8c40!important;
+    border-right-width: 1px !important;
+}
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled){
+    background-color: rgba(255, 140, 64, 0.4);
+}
+.ant-btn:hover, .ant-btn:focus {
+    color: #ff8c40;
+    border-color: #ff8c40;
+    background: #fff;
+}
+.ant-select-selection {
+    border-color: #ff8c40;
+}
+
+.ant-spin-dot-item {
+    background-color: #ff8c40;
+}
+
+.colHeader > button{
+    float:right;
+    margin-right: 10px;
+}
+
+.colBody{
+    border-top: 1px solid #80808026;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.boardColumns{
+    display: flex;
+    overflow:scroll;
+}
+
+.ant-btn-primary{
+    border-color: #ff8c40;
+    background-color: #ff8c40;
+}
+
+
+
+
+.App{
+
+    background:#646464;
+
+
+}
+.headMenuLogo{
+    max-height:52px;
+    margin-left:15px;
+    margin-right:40px;
+    float:left;
+    background:#646464;
+
+}
+
+.SelectPrefix{
+    width:24px;
+}
+
+.headerMenuHolder{
+    padding: 10px;
+    background-color: #646464;
+    display: flex;
+}
+
+
+.headerMenuSelect{
+
+    height:32px;
+    margin-left:20px;
+    max-width: 330px;
+    min-width:240px;
+}
+.headerMenuSelect > .ant-select{
+    width: calc(100% - 24px);
+
+}
+
+.headerMenuSelect > .ant-input-affix-wrapper{
+    padding: 4px 4px;
+    border-right: none;
+    margin-right: -2px;
+    cursor: pointer;
+}
+
+.ticketCard{
+    border: 1px solid #cbcbcb4f;
+    padding:3px;
+    border-radius: 4px;
+}
+
+
+.ticketCardHeader >h5{
+    margin-top :2px;
+    float:left;
+}
+.ticketCardBody {
+    width:100%;
+    clear: both;
+    margin-top: 35px;
+}
+
+.ticketCardBody >div > div {
+    float:left;
+
+}
+
+.ticketCardHeader >.ant-tag{
+    height: 22px;
+    margin-left: 6px;
+    float: left;
+}
+
+.ticketCardActions {
+   display:flex;
+
+    margin: 3px 6px;
+    clear:both;
+}
+.ticketCardActions > div {
+  margin-left:3px;
+
+}
+
+.ant-dropdown-link{
+    color:#ff8c40;
+    float:right;
+    margin-right:6px;
+}
+
+.ticketCard:hover {
+    background-color: #fdf3ea;
+
 }

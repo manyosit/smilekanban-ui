@@ -39,6 +39,7 @@
     "columnCountColor": "orange"
   },
   "dateFormat": "DD.MM.yyyy HH:mm",
+  "searchFields": ["Description","Assignee","Assigned Group"],
   "cardFields": {
     "Summary": "Description",
     "Assigned Group": "Assigned Group",

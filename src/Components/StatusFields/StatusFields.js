@@ -18,7 +18,7 @@ export default function StatusFields(props) {
     
 
     const size = useWindowSize();
-    const {visible, handleClose, fields, item, status, constants, worklogs, worklogConfig} = props
+    const {visible, handleClose, fields, item, status, constants, worklogs, worklogConfig,ticketConfig} = props
     const [form] = Form.useForm();
     const [state, setState] = React.useState({});
     const [wlState, setWlState] = React.useState({});
@@ -27,6 +27,7 @@ export default function StatusFields(props) {
         handleClose({item, fields: {...values, ...constants}, status,worklogConfig,wlFields:wlState})
     }
 
+    console.log(item)
     React.useEffect(() => {
 
         let initState = {}
@@ -48,7 +49,7 @@ export default function StatusFields(props) {
 
     return (
         <Drawer
-            title={item && item.id && `Fields for ${status}`}
+            title={ticketConfig && ticketConfig.idField && item && item[ticketConfig.idField] && `${item[ticketConfig.idField]} Details`}
             placement={"right"}
             closable={true}
             onClose={handleClose}
@@ -57,7 +58,7 @@ export default function StatusFields(props) {
             width={size.height / 3 * 2}
         >
             <Form
-                style={{marginTop: "30px"}}
+                style={{marginTop:15}}
                 form={form}
                 name="fields-ref"
                 onFinish={onFinish}
@@ -68,6 +69,25 @@ export default function StatusFields(props) {
                     console.log(allFields)
                 }}
             >
+                {
+                    ticketConfig && ticketConfig.cardFields && Object.keys(ticketConfig.cardFields).map((field,index)=>{
+
+                        const FieldElement = element["text"]
+                        const onChange = (field, val) => {
+
+                            form.setFieldsValue({[field]: val})
+                        }
+                        <Form.Item
+                            key={`ticketFields-${index}`}
+                            name={field}
+                            label={field}
+
+
+                        >
+                            <FieldElement {...field} onChange={onChange} allFormValues={state} value={state[field]}/>
+                        </Form.Item>
+                    })
+                }
                 {
                     fields && fields.map((e, i) => {
 

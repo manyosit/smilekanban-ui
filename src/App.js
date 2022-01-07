@@ -1,10 +1,13 @@
 import React,{useContext,useState} from "react";
-import {FilterOutlined,FileSearchOutlined } from "@ant-design/icons"
-import {Layout,message,Spin,Tag,Select} from "antd";
+import {EyeInvisibleOutlined } from "@ant-design/icons"
+import {Layout,message,Spin,Tag,Select,Button,Tooltip} from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import './App.css';
 import ErrorHandler from "./util/ErrorHandler";
+import BoardMenu from "./Components/Header/BoardMenu"
+import HeaderMenu from "./Components/Header/HeaderMenu"
 import {useDispatch,connect} from "react-redux";
+import _ from "lodash";
 
 import {useHistory, useParams} from "react-router-dom";
 import {AuthContext} from "./util/Auth/AuthProvider";
@@ -13,12 +16,12 @@ import {AuthContext} from "./util/Auth/AuthProvider";
 import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
 import StatusFields from "./Components/StatusFields/StatusFields";
-import {getTickets,setQuery, setTicketConfig,saveTicket,createWorklog,getTicketWorklogs,getConfigs} from "./util/redux/asyncActions";
+import {setQuery, setTicketConfig,saveTicket,createWorklog,getTicketWorklogs,getConfigs} from "./util/redux/asyncActions";
 import {useWindowSize} from "./util/useWindowSize"
 import {translateQuery} from "./util/componentUtils"
 
 const {Content}=Layout
-const {Option}=Select
+
 
 
 
@@ -55,6 +58,19 @@ const select = state => {
 
 }
 
+const loadSettings = ()=>{
+    return JSON.parse(localStorage.getItem("smilekanban"))
+
+}
+
+const saveSettings = (config,id)=>{
+
+    let newConf=loadSettings()||{}
+    newConf[id]=config
+
+    localStorage.setItem("smilekanban",JSON.stringify(newConf))
+}
+
 function App(props) {
     const {tickets,loading,query, ticketConfig,configs}=props
     let {id} = useParams();
@@ -75,6 +91,14 @@ function App(props) {
     const [showStatusFields,setShowStatusFields] = useState(false);
     const [movedItem,setMovedItem] = useState(undefined);
     const [newStatus,setNewStatus] = useState(undefined);
+    const [boardConf,setBoardConf]= useState(()=>{
+        const conf=loadSettings()
+        if (conf && conf[id] ){
+           return conf[id]
+        }
+       return {hiddenCols:[]}
+    });
+    const [searchVal,setSearchVal]=useState("");
     const size=useWindowSize();
 
 
@@ -172,17 +196,6 @@ function App(props) {
 
     };
     React.useEffect(()=>{
-        const colDef = {}
-        ticketConfig && ticketConfig.columns && Object.keys(ticketConfig.columns).forEach(
-            colConfigName => {
-
-                colDef[colConfigName] = "block"
-
-
-            })
-
-        setColumnWidth(colDef)
-
         ticketConfig && dispatch(setQuery({selection:radioVal, ticketConfig, history, userManager}))
     },[ticketConfig])
 
@@ -194,23 +207,52 @@ function App(props) {
 
 
             dispatch(setTicketConfig({id, history, userManager}))
+            const conf = loadSettings()
+            if (conf && conf[id]){
+                setBoardConf(conf[id])
+            }else{
+                setBoardConf({hiddenCols:[]})
+            }
 
+        setSearchVal("")
 
     },[id])
 
+    React.useEffect(()=>{
+
+        if (boardConf && Object.keys(boardConf).length>0){
+            saveSettings(boardConf,id)
+        }
+
+
+    },[boardConf])
+
+    const hideCol = (column)=>{
+
+        if (boardConf.hiddenCols.indexOf(column)<0){
+
+            setBoardConf( {...boardConf,hiddenCols:[...boardConf.hiddenCols,column]})
+        }
+
+
+    }
+
+    const showCol = (column)=>{
+        setBoardConf( {...boardConf,hiddenCols:boardConf.hiddenCols.filter(c=>c!==column)})
 
 
 
+    }
 
-    const sortTickets=(a,b)=>{
+    const sortTickets=(a,b,ticketConfig)=>{
             const sortBy = ticketConfig.priorityField
             return  intPrio(a[sortBy])-intPrio(b[sortBy])
 
     }
 
-    function filterTickets(tickets, status) {
+    function filterTickets(tickets, status,ticketConfig) {
         if (tickets && tickets.entries && Array.isArray(tickets.entries)) {
-            return tickets.entries.filter(e=>e.values[ticketConfig.columnField]===status).map(e=>e.values).sort(sortTickets)
+            return tickets.entries.filter(e=>e.values[ticketConfig.columnField]===status).map(e=>e.values).sort((a,b)=>{sortTickets(a,b,ticketConfig)})
         } else {
             return []
         }
@@ -223,8 +265,8 @@ function App(props) {
             Object.keys(ticketConfig.columns).forEach(colConfigName => {
                 colDef[colNumber] = {
                     name: colConfigName,
-                    items: filterTickets(tickets, colConfigName),
-                    count: filterTickets(tickets, colConfigName).length
+                    items: filterTickets(tickets, colConfigName,ticketConfig),
+                    count: filterTickets(tickets, colConfigName,ticketConfig).length
                 }
                 colNumber++
             })
@@ -236,6 +278,44 @@ function App(props) {
       setColumns(getColumnDef(ticketConfig, tickets));
     },[tickets, ticketConfig])
 
+
+
+    const searchTickets=(e)=>{
+
+        setSearchVal(e.target.value)
+        if (tickets && ticketConfig && ticketConfig.searchFields && Array.isArray(ticketConfig.searchFields)){
+            delayedQuery(e.target.value,tickets,ticketConfig)
+        }
+
+    }
+
+    const delayedQuery = React.useCallback(
+        _.debounce((q,tickets,ticketConfig) => {
+
+          let filtered={...tickets};
+
+          if (filtered && filtered.entries && Array.isArray(filtered.entries) ){
+
+              filtered.entries=filtered.entries.filter(e=>
+                   ticketConfig.searchFields.map(searchField=>
+
+                          e.values && e.values[searchField] && e.values[searchField].toLowerCase().indexOf(q.toLowerCase())>=0
+
+
+                  ).indexOf(true)>=0
+
+
+              )
+
+              setColumns(getColumnDef(ticketConfig, filtered));
+          }else{
+              console.error("NO TICKETS",filtered)
+          }
+
+
+        }, 500),
+        [], // will be created only once initially
+    );
 
     const menuAction=(action,item)=>{
 
@@ -284,212 +364,168 @@ function App(props) {
   return (
       <ErrorHandler>
         <div className="App">
-            <div className="headMenu" style={{  height:"55px",background:"#646464"}} />
-            <img src="/logo.png" style={{maxHeight:"50px",left:20,top:0, position:"absolute"}}/>
-            <div  style={{  padding: "10px",position:"absolute",right:5,top:0}} >
-
-                <FileSearchOutlined style={{margin:"10px",color:"#b9b9b9"}} />
-                <Select defaultValue="incident" style={{ width: 300}} options={configs} onChange={(k)=>{
-                    history.push(`/kanban/${k}`)
-
-                }} value={id}>
-
-
-
-                </Select>
-                <FilterOutlined style={{margin:"10px",color:"#b9b9b9"}}/>
-                <Select defaultValue="Assigned to me" style={{ width: 300}} onChange={(k)=>{
-                    setRadioVal(k)
-
-                    dispatch(setQuery({selection:k, ticketConfig, history, userManager}))
-
-                }}
-
-                >
-                    <Option value="Assigned to me">Assigned to me</Option>
-                    <Option value="Assigned to my groups">Assigned to my groups</Option>
-
-                </Select>
-            </div>
+            <div className="headMenu"  />
+            <img src="/logo.png" className="headMenuLogo" />
+            <HeaderMenu
+                configs={configs}
+                id={id}
+                ticketConfig={ticketConfig}
+                userManager={userManager}
+                setRadioVal={setRadioVal}
+                searchTickets={searchTickets}
+                boardConf={boardConf}
+                showCol={showCol}
+                searchVal={searchVal}
+            />
 
 
 
           <Layout>
 
-              <Content>
+              <Content style={{height:`${(size ? size.height-55 : 500)}px`,overflowY:'scroll'}}>
                   <Spin spinning={loading}>
-                  <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
-                      <DragDropContext
-                          onDragEnd={result => onDragEnd(result, columns, setColumns)}
-                          onBeforeDragStart={result=>setBlocked(false)}
-                          onDragUpdate={result => onDragUpdate(result, columns, setColumns)}
-                      >
-                          {Object.entries(columns).map(([columnId, column], index) => {
 
-                              return (
-                                <div >
-                                    <h4  onClick={()=>{
-                                        var displayVal;
-                                        if (columnWidth[column.name]==="block"){
-                                            displayVal="small"
-                                        }else{
-                                            displayVal="block"
-                                        }
-                                        setColumnWidth({...columnWidth,[column.name]:displayVal})
-                                    }}
-                                    style={{display:"tablecell",
-                                        float:"none",
-                                        cursor:"pointer",
-                                        paddingTop:"8px",
-                                        paddingBottom: "7px",
-                                        margin: "0px -1px 0px 0px",
-                                        borderRight:"2px solid white",
-                                        boxShadow: "0px 1px lightgray"
+                      <div style={{ /*justifyContent: "center",*/ height: size ? size.height-97 : 0,display:"flex" }} className={"boardColumns"}>
+                          <DragDropContext
+                              onDragEnd={result => onDragEnd(result, columns, setColumns)}
+                              onBeforeDragStart={result=>setBlocked(false)}
+                              onDragUpdate={result => onDragUpdate(result, columns, setColumns)}
+                          >
+                              {Object.entries(columns).filter(([columnId, column])=>boardConf.hiddenCols.indexOf(column.name)<0).map(([columnId, column], index) => {
 
-                                    }}
-                                    >
-                                        { (columnWidth[column.name] === "block") && column.name}<Tag color={ticketConfig && ticketConfig.header.columnCountColor} style={{top:"-2px", position:"relative", left:(columnWidth[column.name] === "block")?"12px":"3px"}}>{column.count}</Tag>
+                                  return (
+                                  <div key={`columnHolder-${index}`}>
+                                    <div  className="stateCol">
+                                        <h4  onClick={()=>{
 
-                                    </h4>
-                                    {
-                                        (columnWidth[column.name] === "block")
-                                       ? (
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    flexDirection: "column",
-                                                    alignItems: "center",
+                                            //HIDE / DISPLAY COLUMNS DEPRICATED
+                                            /*var displayVal;
+                                            if (columnWidth[column.name]==="block"){
+                                                displayVal="small"
+                                            }else{
+                                                displayVal="block"
+                                            }
+                                            setColumnWidth({...columnWidth,[column.name]:displayVal})*/
+                                        }}
 
-                                                }}
-                                                key={columnId}
-                                            >
+                                        className="colHeader"
+                                        >
+                                            {  column.name}
 
+                                            <Tooltip title={"Columns ticket count"}>
+                                                <Tag color={ticketConfig && ticketConfig.header.columnCountColor} className="columnHeaderPriority" >{column.count}</Tag>
+                                            </Tooltip>
 
-                                                <div style={{ margin: 1,borderTop:"1px solid #80808073" }}>
-                                                    <Droppable droppableId={columnId} key={columnId}>
-                                                        {(provided, snapshot) => {
-                                                            const calcSize = (size.width - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length
+                                            <Tooltip title={"Hide Column"}>
+                                                <Button shape="circle" icon={<EyeInvisibleOutlined/>} size={"small"} onClick={()=>{hideCol(column.name)}}></Button>
+                                            </Tooltip>
 
-                                                            return (
+                                        </h4>
 
-
-                                                                <div
-                                                                    {...provided.droppableProps}
-                                                                    ref={provided.innerRef}
-                                                                    style={{
-                                                                        background: snapshot.isDraggingOver && !blocked
-                                                                            ? "lightblue"
-                                                                            : snapshot.isDraggingOver && blocked ? "#f7a4a4":"lightgrey",
-                                                                        padding: 4,
-                                                                        width: calcSize,
-                                                                        cursor:blocked ? "not-allowed": "grab",
-                                                                        minHeight: size.height-97
-                                                                    }}
-                                                                >
-
-                                                                    {column.items && column.items.map((item, index) => {
-                                                                        return (
-                                                                            <Draggable
-                                                                                key={item[ticketConfig.idField]}
-                                                                                draggableId={item[ticketConfig.idField]}
-                                                                                index={index}
-                                                                            >
-                                                                                {(provided, snapshot) => {
-                                                                                    return (
-                                                                                        <div
-                                                                                            ref={provided.innerRef}
-                                                                                            {...provided.draggableProps}
-                                                                                            {...provided.dragHandleProps}
-                                                                                            style={{
-                                                                                                userSelect: "none",
-
-                                                                                                margin: "0 0 4px 0",
-                                                                                                minHeight: "50px",
-                                                                                                borderColor:"orange",
-                                                                                                border:snapshot.isDragging?"#d9363e 1px solid!important":"none",
-                                                                                                backgroundColor: snapshot.isDragging
-                                                                                                    ? "orange"
-                                                                                                    : "white",
-                                                                                                color: "white",
-                                                                                                ...provided.draggableProps.style
-                                                                                            }}
-                                                                                        >
-                                                                                            <Ticket
-                                                                                                item={item}
-                                                                                                menuAction={menuAction}
-                                                                                                ticketConfig={ticketConfig}
-                                                                                            />
-
-
-                                                                                        </div>
-                                                                                    );
-                                                                                }}
-                                                                            </Draggable>
-                                                                        );
-                                                                    })}
-                                                                    {provided.placeholder}
-                                                                </div>
-
-                                                            );
-
-                                                        }}
-
-                                                    </Droppable>
-                                                </div>
-
-                                            </div>
-                                        )
-                                            :(
                                                 <div
-                                                    style={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        alignItems: "center",
-
-                                                    }}
+                                                    className="colBody"
                                                     key={columnId}
                                                 >
-                                                    <div
 
-                                                        style={{
-                                                            textOrientation:"sideways",
-                                                            writingMode:"vertical-rl",
-                                                            background: "lightgrey",
-                                                            padding: 4,
-                                                            marginTop:1,
-                                                            minHeight: size.height-97,
-                                                            borderTop:"1px solid rgba(128, 128, 128, 0.05);"
-                                                        }}
-                                                    >
-                                                        {column.name}
+
+                                                    <div style={{ margin: 1 }}>
+                                                        <Droppable droppableId={columnId} key={columnId}>
+                                                            {(provided, snapshot) => {
+                                                                //const calcSize = (size.width - 30*Object.keys(columnWidth).filter(e=>columnWidth[e]==="small").length)/Object.keys(columnWidth).filter(e=>columnWidth[e]==="block").length
+
+                                                                return (
+
+
+                                                                    <div
+                                                                        className={`droppableCard ${blocked?"droppableCardBlocked":""} ${snapshot.isDraggingOver?"droppableCardDraggingOver":""}`}
+                                                                        {...provided.droppableProps}
+                                                                        ref={provided.innerRef}
+                                                                        style={{
+                                                                           /* background: snapshot.isDraggingOver && !blocked
+                                                                                ? "lightblue"
+                                                                                : snapshot.isDraggingOver && blocked ? "#f7a4a4":"white",
+
+                                                                            cursor:blocked ? "not-allowed": "grab",*/
+                                                                            maxHeight: size ? size.height-120 : 0,
+                                                                        }}
+                                                                    >
+
+                                                                        {column.items && column.items.map((item, index) => {
+                                                                            return (
+                                                                                <Draggable
+                                                                                    key={item[ticketConfig.idField]}
+                                                                                    draggableId={item[ticketConfig.idField]}
+                                                                                    index={index}
+                                                                                >
+                                                                                    {(provided, snapshot) => {
+                                                                                        return (
+                                                                                            <div
+                                                                                                ref={provided.innerRef}
+                                                                                                {...provided.draggableProps}
+                                                                                                {...provided.dragHandleProps}
+                                                                                                className={`draggableCard ${snapshot.isDragging?"draggableCardDragging":""}`}
+                                                                                                style={{
+
+                                                                                                    /*border:snapshot.isDragging?"#d9363e 1px solid!important":"none",
+                                                                                                    backgroundColor: snapshot.isDragging
+                                                                                                        ? "orange"
+                                                                                                        : "white",*/
+
+                                                                                                    ...provided.draggableProps.style
+                                                                                                }}
+                                                                                            >
+                                                                                                <Ticket
+                                                                                                    key={`ticket-item[ticketConfig.idField]-${index}`}
+                                                                                                    item={item}
+                                                                                                    menuAction={menuAction}
+                                                                                                    ticketConfig={ticketConfig}
+                                                                                                />
+
+
+                                                                                            </div>
+                                                                                        );
+                                                                                    }}
+                                                                                </Draggable>
+                                                                            );
+                                                                        })}
+                                                                        {provided.placeholder}
+                                                                    </div>
+
+                                                                );
+
+                                                            }}
+
+                                                        </Droppable>
+                                                    </div>
+
                                                 </div>
-                                                </div>
-                                            )
-                                    }
 
-                                </div>
-                              );
-                          })}
-                      </DragDropContext>
-                  </div>
 
-                <WorkLogs
-                    visible={showWorkLogs}
-                    handleClose={handleCloseWorkLogs}
-                    history={history}
-                    userManager={userManager}
-                    item={workLogInfos}
-                />
-                  <StatusFields
-                      visible={showStatusFields}
-                      handleClose={handleCloseFields}
-                      fields={statusFields}
-                      item={movedItem}
-                      status={newStatus}
-                      constants={statusFieldsConstants}
-                      worklogs={statusWorklogs}
-                      worklogConfig={ticketConfig && ticketConfig.worklogs}
-                  />
+                                    </div>
+                                      </div>
+                                  );
+                              })}
+                          </DragDropContext>
+                      </div>
+
+                    <WorkLogs
+                        visible={showWorkLogs}
+                        handleClose={handleCloseWorkLogs}
+                        history={history}
+                        userManager={userManager}
+                        item={workLogInfos}
+                    />
+                      <StatusFields
+                          visible={showStatusFields}
+                          handleClose={handleCloseFields}
+                          fields={statusFields}
+                          item={movedItem}
+                          ticketConfig={ticketConfig}
+                          status={newStatus}
+                          constants={statusFieldsConstants}
+                          worklogs={statusWorklogs}
+                          worklogConfig={ticketConfig && ticketConfig.worklogs}
+                      />
                   </Spin>
               </Content>
           </Layout>
