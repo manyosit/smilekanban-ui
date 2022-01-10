@@ -27,7 +27,7 @@ export default function StatusFields(props) {
         handleClose({item, fields: {...values, ...constants}, status,worklogConfig,wlFields:wlState})
     }
 
-    console.log(item)
+ 
     React.useEffect(() => {
 
         let initState = {}
