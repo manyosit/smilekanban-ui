@@ -39,7 +39,7 @@
     "columnCountColor": "orange"
   },
   "dateFormat": "DD.MM.yyyy HH:mm",
-  "searchFields": ["Description","Assignee","Assigned Group"],
+  "searchFields": ["Incident Number","Description","Assignee","Assigned Group"],
   "searchDetailUrl": "https://smartit-2002.port.manyos.io/smartit/app/#/incident/displayid/",
   "cardFields": {
     "Summary": "Description",

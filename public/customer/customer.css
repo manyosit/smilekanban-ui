@@ -33,12 +33,18 @@
 }
 
 .ticketCard-open{
-
-    width:400px;
+    -webkit-transition: width 0.2s ease-in-out;
+    -moz-transition: width 0.2s ease-in-out;
+    -o-transition: width 0.2s ease-in-out;
+    transition: width 0.2s ease-in-out;
+    width:500px!important;
 }
 .ticketCard-closed{
-
-    width:300px
+    -webkit-transition: width 0.2s ease-in-out;
+    -moz-transition: width 0.2s ease-in-out;
+    -o-transition: width 0.2s ease-in-out;
+    transition: width 0.2s ease-in-out;
+    width:300px!important;
 }
 
 .stateCol{
@@ -309,4 +315,35 @@
 
 .searchResults{
     min-width: 400px!important;
+}
+
+.menuBoardAction > .ant-select-focused {
+    -webkit-transition: width 0.2s ease-in-out;
+    -moz-transition: width 0.2s ease-in-out;
+    -o-transition: width 0.2s ease-in-out;
+    transition: width 0.2s ease-in-out;
+
+    width:600px;
+}
+.menuBoardAction > .ant-select:not(.ant-select-focused) {
+    -webkit-transition: width 0.2s ease-in-out;
+    -moz-transition: width 0.2s ease-in-out;
+    -o-transition: width 0.2s ease-in-out;
+    transition: width 0.2s ease-in-out;
+
+    width:350px;
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 3px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+
+.boardColumns{
+    overflow-y:hidden ;
 }

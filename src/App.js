@@ -395,7 +395,7 @@ function App(props) {
               <Content style={{height:`${(size ? size.height-55 : 500)}px`,overflowY:'scroll'}}>
                   <Spin spinning={loading}>
 
-                      <div style={{ /*justifyContent: "center",*/ height: size ? size.height-97 : 0,display:"flex" }} className={"boardColumns"}>
+                      <div style={{ /*justifyContent: "center",*/ height: size ? size.height-55 : 0,display:"flex" }} className={"boardColumns"}>
                           <DragDropContext
                               onDragEnd={result => onDragEnd(result, columns, setColumns)}
                               onBeforeDragStart={result=>setBlocked(false)}
