@@ -123,10 +123,10 @@
     width: 100%;
 }
 
-.menuBoardAction .ant-input-affix-wrapper{
-    width:250px;
+.menuBoardAction .ant-select{
+    width:350px;
     float:right;
-    border-style: none none solid none;
+   /* border-style: none none solid none;*/
     margin-right: 15px;
 }
 
@@ -283,4 +283,30 @@
 .ticketCard:hover {
     background-color: #fdf3ea;
 
+}
+
+.searchResultOptionFieldId{
+
+    width: 50%;
+    float:left;
+    text-align:left;
+    margin:2px 0px;
+}
+.searchResultOptionField{
+    float:left;
+    width: 50%;
+
+    text-align:left;
+    margin:2px 0px;
+}
+.searchResultOption > div > div > h6{
+   line-height: 4px;
+
+}
+.searchResults > div >div >div >div>div>div .ant-select-item-option-content{
+    border-bottom: 1px solid black;
+}
+
+.searchResults{
+    min-width: 400px!important;
 }

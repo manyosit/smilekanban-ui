@@ -188,6 +188,45 @@ export const createWorklog = createAsyncThunk("request/createWorklog",  async ({
     return responseWL;
 
 });
+export const searchInRemedy = createAsyncThunk("request/searchInRemedy",  async ({ module, config,value, history,userManager }) => {
+
+
+    const form=config.formName
+    if (config.searchFields && Array.isArray(config.searchFields) && config.searchFields.length>0 && value.length > 2){
+        let query= ""
+        config.searchFields.forEach((field,i)=>{
+            if (i==0){
+                query=`'${field}' LIKE "%${value}%"`
+            }else{
+                query=`${query} OR '${field}' LIKE "%${value}%"`
+            }
+        });
+
+
+        query=encodeURI(query);
+
+        const response = await restApi({url:`${window._env_.REACT_APP_API_URL}/api/arsys/v1/entry/${form}?q=${query}`,requestOptions:{method:"GET","content-type":"application/json"},userManager,history});
+        console.log(response);
+
+        const finResult= response.entries.map(ticket => {
+
+           let result={}
+            result.value=ticket.values[config.idField];
+            Object.keys(config.cardFields).map(field=>{
+                result[field]=ticket.values[config.cardFields[field]]
+            })
+
+            return result
+        })
+        console.log(finResult);
+        return finResult;
+
+    }else{
+        return {};
+    }
+
+
+});
 export const getTicketWorklogs = createAsyncThunk("request/getTicketWorklogs",  async ({ item, worklogConfig, history,userManager }) => {
 
 

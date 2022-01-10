@@ -1,10 +1,9 @@
-import React,{useContext,useState} from "react";
+import React,{useContext,useState,useCallback} from "react";
 import {EyeInvisibleOutlined } from "@ant-design/icons"
 import {Layout,message,Spin,Tag,Select,Button,Tooltip} from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import './App.css';
 import ErrorHandler from "./util/ErrorHandler";
-import BoardMenu from "./Components/Header/BoardMenu"
 import HeaderMenu from "./Components/Header/HeaderMenu"
 import {useDispatch,connect} from "react-redux";
 import _ from "lodash";
@@ -16,7 +15,7 @@ import {AuthContext} from "./util/Auth/AuthProvider";
 import Ticket from "./Components/Ticket/Ticket";
 import WorkLogs from "./Components/WorkLogs/WorkLogs";
 import StatusFields from "./Components/StatusFields/StatusFields";
-import {setQuery, setTicketConfig,saveTicket,createWorklog,getTicketWorklogs,getConfigs} from "./util/redux/asyncActions";
+import {setQuery, setTicketConfig,saveTicket,createWorklog,getTicketWorklogs,getConfigs,searchInRemedy} from "./util/redux/asyncActions";
 import {useWindowSize} from "./util/useWindowSize"
 import {translateQuery} from "./util/componentUtils"
 
@@ -53,7 +52,9 @@ const select = state => {
     sProps.loading=state.request.loading;
     sProps.query=state.request.query;
     sProps.ticketConfig=state.request.ticketConfig;
-    sProps.configs=state.request.configs
+    sProps.configs=state.request.configs;
+    sProps.searchResults=state.request.searchResults;
+    sProps.searching=state.request.searching;
     return sProps
 
 }
@@ -72,7 +73,7 @@ const saveSettings = (config,id)=>{
 }
 
 function App(props) {
-    const {tickets,loading,query, ticketConfig,configs}=props
+    const {tickets,loading,query, ticketConfig,configs,searchResults,searching}=props
     let {id} = useParams();
 
 
@@ -280,17 +281,18 @@ function App(props) {
 
 
 
-    const searchTickets=(e)=>{
+    const searchTickets=(e,remote)=>{
+
 
         setSearchVal(e.target.value)
         if (tickets && ticketConfig && ticketConfig.searchFields && Array.isArray(ticketConfig.searchFields)){
-            delayedQuery(e.target.value,tickets,ticketConfig)
+            delayedQuery(e.target.value,tickets,ticketConfig,remote)
         }
 
     }
 
     const delayedQuery = React.useCallback(
-        _.debounce((q,tickets,ticketConfig) => {
+        _.debounce((q,tickets,ticketConfig,remote) => {
 
           let filtered={...tickets};
 
@@ -311,6 +313,11 @@ function App(props) {
           }else{
               console.error("NO TICKETS",filtered)
           }
+          if(remote){
+              dispatch(searchInRemedy({value:q,module:id,config:ticketConfig,history,userManager}))
+          }
+
+
 
 
         }, 500),
@@ -376,6 +383,9 @@ function App(props) {
                 boardConf={boardConf}
                 showCol={showCol}
                 searchVal={searchVal}
+                searchResults={searchResults}
+                searching={searching}
+
             />
 
 

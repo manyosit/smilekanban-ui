@@ -7,7 +7,7 @@ import {
 
 
 
-import {setQuery, setTicketConfig,saveTicket, createWorklog,getTicketWorklogs,getConfigs} from "./asyncActions";
+import {setQuery, setTicketConfig,saveTicket, createWorklog,getTicketWorklogs,getConfigs,searchInRemedy} from "./asyncActions";
 
 const middleware = [
     ...getDefaultMiddleware(),
@@ -24,7 +24,9 @@ const kanbanState = {
     query:"1=2",
     tickets:[],
     worklogs:[],
-    configs:[]
+    configs:[],
+    searchResults:[],
+    searching:false
 };
 
 
@@ -42,7 +44,9 @@ const requestSlice = createSlice({
                 query:"1=2",
                 tickets:[],
                 worklogs:[],
-                configs:[]
+                configs:[],
+                searchResults:[],
+                searching:false
             };
 
         },
@@ -137,6 +141,18 @@ const requestSlice = createSlice({
         [getConfigs.fulfilled]: (state, action) => {
             state.loading = false;
             state.configs = action.payload;
+        },
+        [searchInRemedy.pending]: state => {
+            state.searching = true;
+        },
+        [searchInRemedy.rejected]: (state, action) => {
+            state.searching = false;
+
+            state.error = action.error.message;
+        },
+        [searchInRemedy.fulfilled]: (state, action) => {
+            state.searching = false;
+            state.searchResults = action.payload;
         }
 
     }

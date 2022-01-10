@@ -37,6 +37,8 @@
     "columnCountColor": "orange"
   },
   "dateFormat": "DD.MM.yyyy HH:mm",
+  "searchFields": ["Summary","ASGRP","Request Assignee"],
+  "searchDetailUrl": "https://smartit-2002.port.manyos.io/smartit/app/#/workorder/displayid/",
   "cardFields": {
     "Summary": "Summary",
     "Assigned Group": "ASGRP",

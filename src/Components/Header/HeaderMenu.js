@@ -1,5 +1,5 @@
 import React from "react";
-import {Select,Input} from "antd"
+import {Select,Input,Autocomplete} from "antd"
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
 import {FilterOutlined,TableOutlined } from "@ant-design/icons"
@@ -9,15 +9,17 @@ import {setQuery} from "../../util/redux/asyncActions";
 
 const {Option}=Select;
 
-const HeaderMenu=({configs,id,ticketConfig,userManager,setRadioVal,searchTickets,boardConf,showCol,searchVal})=>{
+const HeaderMenu=({configs,id,ticketConfig,userManager,setRadioVal,searchTickets,boardConf,showCol,searchVal,searchResults,searching})=>{
 
     const history=useHistory();
     const dispatch=useDispatch();
+
 
     return (
         <div  className={"headerMenuHolder"} >
 
             <div className={"headerMenuSelect"}>
+
                 <Input disabled={true} prefix={<TableOutlined />}  className={"SelectPrefix"}/>
                 <Select defaultValue="incident" options={configs} onChange={(k)=>{
                     history.push(`/kanban/${k}`)
@@ -52,6 +54,9 @@ const HeaderMenu=({configs,id,ticketConfig,userManager,setRadioVal,searchTickets
                     boardConf={boardConf}
                     showCol={showCol}
                     searchVal={searchVal}
+                    options={searchResults}
+                    url={ticketConfig && ticketConfig.searchDetailUrl}
+                    searching={searching}
 
                 />
 
