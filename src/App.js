@@ -294,27 +294,29 @@ function App(props) {
     const delayedQuery = React.useCallback(
         _.debounce((q,tickets,ticketConfig,remote) => {
 
-          let filtered={...tickets};
 
-          if (filtered && filtered.entries && Array.isArray(filtered.entries) ){
+          if(remote){
+              dispatch(searchInRemedy({value:q,module:id,config:ticketConfig,history,userManager}))
+          }else{
+              let filtered={...tickets};
 
-              filtered.entries=filtered.entries.filter(e=>
-                   ticketConfig.searchFields.map(searchField=>
+              if (filtered && filtered.entries && Array.isArray(filtered.entries) ){
+
+                  filtered.entries=filtered.entries.filter(e=>
+                      ticketConfig.searchFields.map(searchField=>
 
                           e.values && e.values[searchField] && e.values[searchField].toLowerCase().indexOf(q.toLowerCase())>=0
 
 
-                  ).indexOf(true)>=0
+                      ).indexOf(true)>=0
 
 
-              )
+                  )
 
-              setColumns(getColumnDef(ticketConfig, filtered));
-          }else{
-              console.error("NO TICKETS",filtered)
-          }
-          if(remote){
-              dispatch(searchInRemedy({value:q,module:id,config:ticketConfig,history,userManager}))
+                  setColumns(getColumnDef(ticketConfig, filtered));
+              }else{
+                  console.error("NO TICKETS",filtered)
+              }
           }
 
 

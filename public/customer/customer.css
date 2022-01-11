@@ -129,12 +129,7 @@
     width: 100%;
 }
 
-.menuBoardAction .ant-select{
-    width:350px;
-    float:right;
-   /* border-style: none none solid none;*/
-    margin-right: 15px;
-}
+
 
 
 .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover{
@@ -317,21 +312,28 @@
     min-width: 400px!important;
 }
 
-.menuBoardAction > .ant-select-focused {
-    -webkit-transition: width 0.2s ease-in-out;
-    -moz-transition: width 0.2s ease-in-out;
-    -o-transition: width 0.2s ease-in-out;
-    transition: width 0.2s ease-in-out;
+.menuBoardAction > .searchField.ant-select-focused {
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 
-    width:600px;
+    width: calc(100% - 214px - 100px - 70px);
+    position: absolute;
+    left:314px;
+
+
 }
-.menuBoardAction > .ant-select:not(.ant-select-focused) {
+.menuBoardAction > .searchField:not(.ant-select-focused) {
     -webkit-transition: width 0.2s ease-in-out;
     -moz-transition: width 0.2s ease-in-out;
     -o-transition: width 0.2s ease-in-out;
     transition: width 0.2s ease-in-out;
 
-    width:350px;
+    width: calc(100% - 100px - 70px);
+    float:right;
+    /* border-style: none none solid none;*/
+    margin-right: 15px;
 }
 
 ::-webkit-scrollbar {
@@ -347,3 +349,27 @@
 .boardColumns{
     overflow-y:hidden ;
 }
+
+.searchSelectAction{
+    width:100px;
+    margin-right: -7px;
+}
+
+
+.searchField {
+
+
+    width: calc(100% - 100px );
+
+
+
+}
+.search  {
+
+    float: right;
+    width: calc(100% - 70px);
+    margin-right: 9px;
+
+
+}
+
